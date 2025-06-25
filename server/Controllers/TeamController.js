@@ -77,7 +77,6 @@ const getTeamMembers = async (req, res) => {
         const members = await TeamDetail.find({ teamId: req.params.teamId })
             .populate("userId", "name email designation active") // select specific fields from User
             .populate("teamId", "teamName"); // populate team name from Team collection
-        console.log(members)
         const filteredMembers = members.map((member) => ({
             teamId: member.teamId?._id,
             userId: member.userId?._id,
@@ -87,7 +86,6 @@ const getTeamMembers = async (req, res) => {
             active: member.userId?.active,
             teamName: member.teamId?.teamName
         }));
-        console.log(filteredMembers)
         return res.status(200).json(filteredMembers);
     } catch (err) {
         return res.status(500).json({ message: err.message });

@@ -10,6 +10,4 @@ const ProjectSchema = new Schema({
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
-export default mongoose.model('Project', ProjectSchema);
-// This schema defines the structure of the Project document in MongoDB.
-// It includes fields for projectName, projectStartDate, projectEndDate, description,
+export default mongoose.model('Project', ProjectSchema)

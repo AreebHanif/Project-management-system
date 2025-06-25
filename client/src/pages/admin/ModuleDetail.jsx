@@ -27,6 +27,7 @@ import {
   useDeleteTaskByIdMutation,
 } from "../../redux/Api/taskSlice";
 import TaskModal from "../../components/Modal/TaskModal";
+import AddTeamLeaderModal from "../../components/Modal/AddTeamLeaderModal";
 
 const ModuleDetail = () => {
   const { moduleId, projectId } = useParams();
@@ -36,22 +37,35 @@ const ModuleDetail = () => {
   const [filterPriority, setFilterPriority] = useState("all");
   const [isEdit, setIsEdit] = useState(false);
   const [isShowModal, setIsShowModal] = useState(false);
+  const [isShowTeamLeaderModal, setIsShowTeamLeaderModal] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const { data: module, isLoading, error } = useGetModuleByIdQuery(moduleId);
-  let [createTask] = useCreateTaskMutation();
+  const [createTask] = useCreateTaskMutation();
   const [updateTaskById] = useUpdateTaskByIdMutation();
   const { data: tasks, refetch } = useGetTasksListByIdQuery(moduleId);
   const [deleteTaskById] = useDeleteTaskByIdMutation();
 
+  // Close dropdown when clicking outside
   useEffect(() => {
-    console.log(moduleId);
-    console.log("current", currentTask);
-    console.log(tasks);
-  }, [currentTask]);
+    const handleClickOutside = (event) => {
+      if (showDropdown && !event.target.closest(".dropdown-container")) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
+
+  useEffect(() => {
+    console.log("module", tasks);
+  });
 
   const handleGoBack = () => {
     window.history.back();
@@ -61,6 +75,7 @@ const ModuleDetail = () => {
     setIsShowModal(true);
     setIsEdit(false);
     setCurrentTask(null);
+    setShowDropdown(false);
   };
 
   const handleEdit = (task) => {
@@ -110,25 +125,24 @@ const ModuleDetail = () => {
     try {
       let res;
       if (isEdit) {
-        let id = currentTask._id;
-        console.log("formData", formData);
+        const id = currentTask._id;
         res = await updateTaskById({ taskId: id, data: formData }).unwrap();
         setCurrentTask(null);
-        console.log(res);
         toast.success(
-          res?.data?.message || res?.message || "Task Updated successfully"
+          res?.data?.message || res?.message || "Task updated successfully"
         );
       } else {
         res = await createTask(formData).unwrap();
         toast.success(
-          res?.data?.message || res?.message || "Task Created successfully"
+          res?.data?.message || res?.message || "Task created successfully"
         );
       }
       refetch();
+      setIsShowModal(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error(
-        error?.data?.message || error?.message || "Error Creating task"
+        error?.data?.message || error?.message || "Error processing task"
       );
     } finally {
       setIsSubmitting(false);
@@ -139,8 +153,6 @@ const ModuleDetail = () => {
     const matchesSearch =
       task.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    // ||
-    // task.assignedTo?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesActiveFilter =
       filterActive === "all" ||
@@ -148,7 +160,8 @@ const ModuleDetail = () => {
       (filterActive === "inactive" && !task.active);
 
     const matchesPriorityFilter =
-      filterPriority === "all" || task.priority === filterPriority;
+      filterPriority === "all" ||
+      task.priority?.toLowerCase() === filterPriority;
 
     return matchesSearch && matchesActiveFilter && matchesPriorityFilter;
   });
@@ -183,8 +196,8 @@ const ModuleDetail = () => {
   };
 
   const handleAddTeamLeader = () => {
-    // Your add team leader logic
     setShowDropdown(false);
+    setIsShowTeamLeaderModal(true);
   };
 
   if (isLoading) {
@@ -260,8 +273,16 @@ const ModuleDetail = () => {
                       <User className="w-4 h-4 mr-1 text-gray-400" />
                       <span className="text-sm text-gray-600">
                         Team Leader:{" "}
-                        <span className="font-medium text-gray-900">
-                          {"Team Leader"}
+                        <span
+                          className={`font-medium ${
+                            module?.teamLeader
+                              ? "text-gray-900"
+                              : "text-white bg-red-500 rounded-2xl px-2 py-1"
+                          }`}
+                        >
+                          {!module?.teamLeader
+                            ? "Team Leader not Assigned"
+                            : module.teamLeader?.name}
                         </span>
                       </span>
                     </div>
@@ -283,7 +304,7 @@ const ModuleDetail = () => {
               </div>
 
               {/* Three Dot Menu */}
-              <div className="relative">
+              <div className="relative dropdown-container">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg hover:from-indigo-700 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
@@ -325,14 +346,6 @@ const ModuleDetail = () => {
               </p>
             </div>
           </div>
-
-          {/* Add click outside handler to close dropdown */}
-          {showDropdown && (
-            <div
-              className="fixed inset-0 z-40"
-              onClick={() => setShowDropdown(false)}
-            />
-          )}
 
           {/* Action Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -393,7 +406,7 @@ const ModuleDetail = () => {
         {/* Tasks List */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-indigo-50 to-cyan-50 px-6 py-4 border-b border-gray-200">
-            <div className="min-w-[1200px] grid grid-cols-14 gap-4 font-medium text-gray-700">
+            <div className="min-w-[1200px] grid grid-cols-12 gap-4 font-medium text-gray-700">
               <div className="col-span-3 flex items-center">
                 <FileText className="w-4 h-4 mr-2" />
                 Task Name
@@ -401,8 +414,8 @@ const ModuleDetail = () => {
               <div className="col-span-3">Description</div>
               <div className="col-span-2 text-center">Priority</div>
               <div className="col-span-2 text-center">Status</div>
-              <div className="col-span-2 text-center">Completion</div>
-              <div className="col-span-2 text-center">Actions</div>
+              <div className="col-span-1 text-center">Completion</div>
+              <div className="col-span-1 text-center">Actions</div>
             </div>
           </div>
 
@@ -437,10 +450,10 @@ const ModuleDetail = () => {
                         index % 2 === 0 ? "bg-gray-25" : "bg-white"
                       }`}
                     >
-                      <div className="grid grid-cols-14 gap-4 items-center">
+                      <div className="grid grid-cols-12 gap-4 items-center">
                         {/* Task Name  */}
                         <div className="col-span-3">
-                          <div className="font-bold text-gray-900 mb-1">
+                          <div className="font-bold text-gray-900 mb-1 hover:text-indigo-600 transition-colors">
                             <Link to={`${task._id}`}>{task.name}</Link>
                           </div>
                         </div>
@@ -488,7 +501,7 @@ const ModuleDetail = () => {
                         </div>
 
                         {/* Task completion  */}
-                        <div className="col-span-2 text-center">
+                        <div className="col-span-1 text-center">
                           <button
                             className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
                               task.isCompleted
@@ -511,7 +524,7 @@ const ModuleDetail = () => {
                         </div>
 
                         {/* Task Actions  */}
-                        <div className="col-span-2 flex items-center justify-center space-x-2">
+                        <div className="col-span-1 flex items-center justify-center space-x-2">
                           <button
                             onClick={() => handleEdit(task)}
                             className="p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -555,8 +568,9 @@ const ModuleDetail = () => {
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
                   {
-                    tasks?.tasksList?.filter((t) => t.priority === "high")
-                      .length
+                    tasks?.tasksList?.filter(
+                      (t) => t.priority?.toLowerCase() === "high"
+                    ).length
                   }
                 </div>
                 <div className="text-gray-600">High Priority</div>
@@ -564,15 +578,20 @@ const ModuleDetail = () => {
               <div className="text-center">
                 <div className="text-2xl font-bold text-yellow-600">
                   {
-                    tasks?.tasksList?.filter((t) => t.priority === "medium")
-                      .length
+                    tasks?.tasksList?.filter(
+                      (t) => t.priority?.toLowerCase() === "medium"
+                    ).length
                   }
                 </div>
                 <div className="text-gray-600">Medium Priority</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {tasks?.tasksList?.filter((t) => t.priority === "low").length}
+                  {
+                    tasks?.tasksList?.filter(
+                      (t) => t.priority?.toLowerCase() === "low"
+                    ).length
+                  }
                 </div>
                 <div className="text-gray-600">Low Priority</div>
               </div>
@@ -581,7 +600,7 @@ const ModuleDetail = () => {
         )}
       </div>
 
-      {/* Task Modal would go here */}
+      {/* Task Modal */}
       {isShowModal && (
         <TaskModal
           task={currentTask}
@@ -595,6 +614,14 @@ const ModuleDetail = () => {
           handleSubmit={handleSubmit}
           handleEdit={handleEdit}
           setErrors={setErrors}
+        />
+      )}
+
+      {/* Team Leader Modal */}
+      {isShowTeamLeaderModal && (
+        <AddTeamLeaderModal
+          isShowModal={isShowTeamLeaderModal}
+          setIsShowModal={setIsShowTeamLeaderModal}
         />
       )}
     </div>

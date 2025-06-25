@@ -45,12 +45,19 @@ const moduleSlice = apiSlice.injectEndpoints({
             providesTags: ["Module"]
         }),
 
-        // currently i am removing this part below
         teamAssignedToModule: builder.mutation({
             query: ({ teamId, moduleId }) => ({
                 url: `${MODULE_URL}/team-module`,
                 method: "POST",
                 body: { teamId, moduleId }
+            }),
+            invalidatesTags: ["Module"]
+        }),
+        teamLeaderAssignedToModule: builder.mutation({
+            query: ({ teamLeaderId, moduleId }) => ({
+                url: `${MODULE_URL}/team-leader`,
+                method: "POST",
+                body: { teamLeaderId, moduleId }
             }),
             invalidatesTags: ["Module"]
         })
@@ -63,5 +70,6 @@ export const {
     useUpdateModuleByIdMutation,
     useDeleteModuleByIdMutation,
     useGetModuleByIdQuery,
-    useTeamAssignedToModuleMutation
+    useTeamAssignedToModuleMutation,
+    useTeamLeaderAssignedToModuleMutation
 } = moduleSlice;

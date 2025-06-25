@@ -11,6 +11,7 @@ let taskSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Tasks']
         }),
+
         getTasksListById: builder.query({
             query: (moduleId) => ({
                 url: `${TASK_URL}/${moduleId}`,
@@ -18,6 +19,14 @@ let taskSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ['Task']
         }),
+
+        getTaskById: builder.query({
+            query: ({ moduleId, taskId }) => ({
+                url: `${TASK_URL}/${moduleId}/${taskId}`,
+                method: 'GET'
+            }),
+        }),
+
         updateTaskById: builder.mutation({
             query: ({ taskId, data }) => ({
                 url: `${TASK_URL}/${taskId}`,
@@ -26,6 +35,7 @@ let taskSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Tasks']
         }),
+
         deleteTaskById: builder.mutation({
             query: (moduleId) => ({
                 url: `${TASK_URL}/${moduleId}`,
@@ -33,21 +43,33 @@ let taskSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Tasks']
         }),
+
         taskAssignedToUser: builder.mutation({
-            query: (userId, data) => ({
-                url: `${TASK_URL}/${userId}`,
-                method: 'POST', // <-- Specify the HTTP method here
-                body: data
+            query: ({ memberId, formData }) => ({
+                url: `${TASK_URL}/assigned/${memberId}`,
+                method: 'POST',
+                body: formData,
             }),
             invalidatesTags: ['Tasks']
-        })
+        }),
+
+        taskAssignUpdate: builder.mutation({
+            query: ({ taskId, userId, formData }) => ({
+                url: `${TASK_URL}/assignment/${taskId}/${userId}`,
+                method: "PUT",
+                body: formData,
+            }),
+            invalidatesTags: ["Tasks"]
+        }),
     })
 })
 
 export const {
     useCreateTaskMutation,
     useGetTasksListByIdQuery,
+    useGetTaskByIdQuery,
     useDeleteTaskByIdMutation,
     useUpdateTaskByIdMutation,
-    useTaskAssignedToUserMutation
+    useTaskAssignedToUserMutation,
+    useTaskAssignUpdateMutation
 } = taskSlice

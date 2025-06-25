@@ -7,7 +7,8 @@ function AdminRoute() {
   return userInfo && userInfo.isAdmin ? (
     <Outlet />
   ) : (
-    <Navigate to="/login" replace />
+    // <Navigate to="/login" replace />
+    <div>You are not authorized to view this page.</div>
   );
 }
 

@@ -5,6 +5,8 @@ import {
     deleteTaskById,
     getTaskListById,
     taskAssignedToUser,
+    getTaskById,
+    taskAssignmentUpdate,
 } from '../Controllers/TaskController.js';
 import { isAuthenticated } from '../middleware/authMiddleware.js';
 
@@ -17,8 +19,14 @@ router
     .put(isAuthenticated, updateTaskById)
     .delete(isAuthenticated, deleteTaskById)
     .get(isAuthenticated, getTaskListById);
-router
-    .route('/assigned/:id')
+
+router.route('/:moduleId/:taskId')
+    .get(isAuthenticated, getTaskById);
+
+router.route('/assigned/:id')
     .post(isAuthenticated, taskAssignedToUser)
+
+router.route("/assignment/:taskId/:userId")
+    .put(isAuthenticated, taskAssignmentUpdate);
 
 export default router;

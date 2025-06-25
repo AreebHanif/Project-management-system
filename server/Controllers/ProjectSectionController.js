@@ -6,7 +6,6 @@ const createModule = async (req, res) => {
     try {
         const { projectId } = req.params;
         const { moduleName, description, active } = req.body;
-        console.log("req body from create", req.body)
 
         if (!projectId || !moduleName || !description) {
             return res.status(400).json({ message: "All fields are required." });
@@ -114,26 +113,31 @@ const updateModuleById = async (req, res) => {
 
 const getModuleById = async (req, res) => {
     try {
-        const { id } = req.params
-        const module = await ProjectSection.findById(id)
+        const { id } = req.params;
+        const module = await ProjectSection.findById(id).populate("teamLeader", "name -_id");
         if (!module) {
-            return res.status(404).json({ message: "Module not found" })
+            return res.status(404).json({ message: "Module not found" });
         }
-        let { projectId } = module
+
+        const { projectId } = module;
         if (!projectId) {
-            return res.status(400).json({ message: "ProjectId not found" })
+            return res.status(400).json({ message: "ProjectId not found" });
         }
-        let projectName = await Project.findById(module.projectId).select("projectName -_id")
+
+        const project = await Project.findById(projectId).select("projectName -_id");
+
         return res.status(200).json({
             moduleName: module.moduleName,
             active: module.active,
             description: module.description,
-            projectName: projectName.projectName
-        })
+            projectName: project?.projectName || null,
+            teamLeader: module.teamLeader,
+        });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error. M-04" });
     }
 };
+
 
 const teamAssignedToModule = async (req, res) => {
     try {
@@ -152,6 +156,24 @@ const teamAssignedToModule = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: "Internal server error. M-04" });
     }
+};
+
+const teamLeaderAssignedToModule = async (req, res) => {
+    try {
+        const { teamLeaderId, moduleId } = req.body
+        if (!teamLeaderId || !moduleId) {
+            return res.status(400).json({ message: "Team leader id and module id are required" });
+        }
+
+        const updatedModule = await ProjectSection.findByIdAndUpdate(moduleId, { teamLeader: teamLeaderId }, { new: true }).populate("teamLeader", "name -_id");
+
+        if (!updatedModule) {
+            return res.status(404).json({ message: "Module not found or could not be updated" })
+        }
+        return res.status(200).json({ message: "Team Leader Successfully assigned to module", updatedModule })
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error. M-04" })
+    }
 }
 
 export {
@@ -161,4 +183,5 @@ export {
     updateModuleById,
     getModuleById,
     teamAssignedToModule,
+    teamLeaderAssignedToModule,
 }
