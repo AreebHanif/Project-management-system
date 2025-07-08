@@ -63,10 +63,6 @@ const ModuleDetail = () => {
     };
   }, [showDropdown]);
 
-  useEffect(() => {
-    console.log("module", tasks);
-  });
-
   const handleGoBack = () => {
     window.history.back();
   };
@@ -149,23 +145,6 @@ const ModuleDetail = () => {
     }
   };
 
-  const filteredTasks = tasks?.tasksList?.filter((task) => {
-    const matchesSearch =
-      task.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.description?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesActiveFilter =
-      filterActive === "all" ||
-      (filterActive === "active" && task.active) ||
-      (filterActive === "inactive" && !task.active);
-
-    const matchesPriorityFilter =
-      filterPriority === "all" ||
-      task.priority?.toLowerCase() === filterPriority;
-
-    return matchesSearch && matchesActiveFilter && matchesPriorityFilter;
-  });
-
   const getPriorityConfig = (priority) => {
     switch (priority) {
       case "High":
@@ -199,6 +178,24 @@ const ModuleDetail = () => {
     setShowDropdown(false);
     setIsShowTeamLeaderModal(true);
   };
+
+  const filteredTasks = tasks?.tasksList?.filter((task) => {
+    const matchesSearch =
+      task.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+
+    const matchesActiveFilter =
+      filterActive === "all" ||
+      (filterActive === "active" && task.active) ||
+      (filterActive === "inactive" && !task.active);
+
+    const matchesPriorityFilter =
+      filterPriority === "all" ||
+      task.priority?.toLowerCase() === filterPriority;
+
+    return matchesSearch && matchesActiveFilter && matchesPriorityFilter;
+  });
 
   if (isLoading) {
     return (
@@ -274,11 +271,10 @@ const ModuleDetail = () => {
                       <span className="text-sm text-gray-600">
                         Team Leader:{" "}
                         <span
-                          className={`font-medium ${
-                            module?.teamLeader
-                              ? "text-gray-900"
-                              : "text-white bg-red-500 rounded-2xl px-2 py-1"
-                          }`}
+                          className={`font-medium ${module?.teamLeader
+                            ? "text-gray-900"
+                            : "text-white bg-red-500 rounded-2xl px-2 py-1"
+                            }`}
                         >
                           {!module?.teamLeader
                             ? "Team Leader not Assigned"
@@ -432,8 +428,8 @@ const ModuleDetail = () => {
                   </h3>
                   <p className="text-gray-500">
                     {searchTerm ||
-                    filterActive !== "all" ||
-                    filterPriority !== "all"
+                      filterActive !== "all" ||
+                      filterPriority !== "all"
                       ? "Try adjusting your search or filter criteria"
                       : "Get started by creating your first task"}
                   </p>
@@ -446,9 +442,8 @@ const ModuleDetail = () => {
                   return (
                     <div
                       key={task._id}
-                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${
-                        index % 2 === 0 ? "bg-gray-25" : "bg-white"
-                      }`}
+                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${index % 2 === 0 ? "bg-gray-25" : "bg-white"
+                        }`}
                     >
                       <div className="grid grid-cols-12 gap-4 items-center">
                         {/* Task Name  */}
@@ -480,11 +475,10 @@ const ModuleDetail = () => {
                         {/* Task Status  */}
                         <div className="col-span-2 text-center">
                           <button
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
-                              task.active
-                                ? "bg-green-100 text-green-700 hover:bg-green-200"
-                                : "bg-red-100 text-red-700 hover:bg-red-200"
-                            }`}
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${task.active
+                              ? "bg-green-100 text-green-700 hover:bg-green-200"
+                              : "bg-red-100 text-red-700 hover:bg-red-200"
+                              }`}
                           >
                             {task.active ? (
                               <>
@@ -503,11 +497,10 @@ const ModuleDetail = () => {
                         {/* Task completion  */}
                         <div className="col-span-1 text-center">
                           <button
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
-                              task.isCompleted
-                                ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                                : "bg-orange-100 text-orange-700 hover:bg-orange-200"
-                            }`}
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${task.isCompleted
+                              ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                              : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                              }`}
                           >
                             {task.isCompleted ? (
                               <>

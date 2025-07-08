@@ -152,6 +152,7 @@ const teamAssignedToModule = async (req, res) => {
             return res.status(400).json({ message: "Error assigning module to team" })
         }
         await teamAssigned.save()
+
         return res.status(200).json({ message: "Team successfully assigned to module", teamAssigned })
     } catch (error) {
         return res.status(500).json({ message: "Internal server error. M-04" });

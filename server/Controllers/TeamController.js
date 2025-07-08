@@ -1,5 +1,7 @@
 import Team from "../models/Team.js";
 import TeamDetail from "../models/TeamDetail.js";
+import User from "../models/User.js";
+import { userAddedToTeam } from "../utils/Notification.js";
 
 // Create a new team
 const createTeam = async (req, res) => {
@@ -58,16 +60,36 @@ const deleteTeamById = async (req, res) => {
 // Add member to a team
 const addMemberToTeam = async (req, res) => {
     const { teamId, userId } = req.body;
+
     try {
+        // 1. Check if user is already in the team
         const alreadyExists = await TeamDetail.findOne({ teamId, userId });
         if (alreadyExists) {
             return res.status(400).json({ message: "User already in the team" });
         }
+
+        // 2. Add user to the team
         const detail = await TeamDetail.create({ teamId, userId });
         res.status(201).json(detail);
+
+        // 3. Fetch user details
+        const user = await User.findById(userId).select("name email");
+        const team = await Team.findById(teamId).select("teamName");
+
+        if (!user || !team) {
+            console.warn("❗ Cannot send email: user or team not found");
+            return;
+        }
+
+        // 4. Send email notification
+        await userAddedToTeam(user.name, user.email, team.teamName);
+
     } catch (err) {
-        console.log('T-06')
-        res.status(500).json({ message: "Error adding member to team t-06", error: err.message });
+        console.error("T-06", err);
+        res.status(500).json({
+            message: "Error adding member to team t-06",
+            error: err.message,
+        });
     }
 };
 

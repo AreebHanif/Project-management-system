@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import createToken from '../utils/createToken.js';
-
+import { userRegister } from "../utils/Notification.js"
 
 const createUser = async (req, res) => {
     let { name, email, password, designation, image } = req.body;
@@ -13,14 +13,14 @@ const createUser = async (req, res) => {
         return res.status(400).json({ message: 'User already exists.' });
     }
     try {
-        console.log("before hashing", password)
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             name, email, password: hashedPassword, designation, image
         });
-        console.log("After hashing", hashedPassword)
         const savedUser = await newUser.save();
-
+        if (savedUser) {
+            userRegister(name, email, password)
+        }
         const savedUserObj = savedUser.toObject();
         delete savedUserObj.password;
 

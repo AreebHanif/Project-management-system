@@ -15,6 +15,7 @@ import ProjectDetail from "./pages/admin/ProjectDetail";
 import ModuleDetail from "./pages/admin/ModuleDetail";
 import TaskDetails from "./pages/User/TaskDetails";
 import TeamList from "./pages/admin/TeamList";
+import Practice from "./pages/practice";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Routes>
           {/* Routes for EveryOne */}
           <Route path="/" element={<Home />} />
+          <Route path="/practice" element={<Practice />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />

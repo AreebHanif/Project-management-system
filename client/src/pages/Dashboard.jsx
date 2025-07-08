@@ -3,13 +3,7 @@ import {
   FolderOpen,
   Users,
   CheckSquare,
-  BarChart3,
   Settings,
-  Plus,
-  Search,
-  Bell,
-  User,
-  Calendar,
   Clock,
   TrendingUp,
   AlertCircle,
@@ -243,13 +237,12 @@ export default function Dashboard() {
               {dashboardData.recentActivity?.map((activity) => (
                 <div key={activity.id} className="flex items-start space-x-3">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      activity.type === "project"
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${activity.type === "project"
                         ? "bg-blue-100"
                         : activity.type === "task"
-                        ? "bg-green-100"
-                        : "bg-purple-100"
-                    }`}
+                          ? "bg-green-100"
+                          : "bg-purple-100"
+                      }`}
                   >
                     {activity.type === "project" && (
                       <FolderOpen className="w-4 h-4 text-blue-600" />

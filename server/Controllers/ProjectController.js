@@ -92,6 +92,10 @@ const deleteProjectById = async (req, res) => {
     try {
         const projectId = req.params.id;
         const project = await Project.findByIdAndDelete(projectId);
+        let modulesDeleted = await ProjectSection.deleteMany({ projectId })
+        if (!modulesDeleted) {
+            return res.status(400).json({ message: 'Failed to delete project sections' });
+        }
         if (!project) {
             return res.status(404).json({ message: 'Project not found' });
         }

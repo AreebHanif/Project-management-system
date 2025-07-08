@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const TeamDetailSchema = new Schema({
     teamId: { type: Schema.Types.ObjectId, ref: 'Team', required: true },
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
 export default mongoose.model('TeamDetail', TeamDetailSchema);

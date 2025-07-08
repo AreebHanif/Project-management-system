@@ -89,12 +89,19 @@ const AddTeamLeaderModal = ({
         teamId: selectedTeamId,
         moduleId: moduleId,
       }).unwrap();
-
+      if (teamRes?.error) {
+        toast.error(teamRes?.error?.data?.message);
+        return;
+      }
       // Then assign team leader to module
       const teamLeaderRes = await teamLeaderAssignedToModule({
         teamLeaderId: selectedMemberId,
         moduleId: moduleId,
       }).unwrap();
+      if (teamLeaderRes?.error) {
+        toast.error(teamLeaderRes?.error?.data?.message);
+        return;
+      }
 
       toast.success("Team and team leader assigned successfully");
       handleClose();
@@ -114,7 +121,7 @@ const AddTeamLeaderModal = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-none bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">

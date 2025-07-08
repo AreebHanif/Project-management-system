@@ -37,7 +37,12 @@ const ProjectListPage = () => {
 
     try {
       let res = await createProject(formData).unwrap();
-      toast.success(res?.data?.message || "Project Created Successfully");
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to create project");
+        return;
+      } else {
+        toast.success(res?.data?.message || "Project Created Successfully");
+      }
       setShowCreateModal(false);
       refetch();
     } catch (error) {

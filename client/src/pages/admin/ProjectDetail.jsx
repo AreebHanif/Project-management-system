@@ -38,10 +38,6 @@ const ProjectDetail = () => {
   let [delteModuleById] = useDeleteModuleByIdMutation();
   let [updateModuleById] = useUpdateModuleByIdMutation();
 
-  useEffect(() => {
-    console.log(modules);
-  }, [modules]);
-
   const handleGoBack = () => {
     window.history.back();
   };
@@ -52,9 +48,18 @@ const ProjectDetail = () => {
     // Simulate API call
     try {
       let res = await createModuleMutation({ projectId, formData });
-      toast.success(
-        res?.data?.message || res?.message || "Module Created Successfully"
-      );
+      if (res?.error) {
+        toast.error(
+          res?.error?.data?.message ||
+          res?.error?.message ||
+          "Module Creation failed"
+        );
+        return;
+      } else {
+        toast.success(
+          res?.data?.message || res?.message || "Module Created Successfully"
+        );
+      }
       setFormData({
         moduleName: "",
         active: true,
@@ -286,7 +291,7 @@ const ProjectDetail = () => {
         {/* Modules List  */}
         {/* Modules Section */}
         {filteredModules?.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid ">
             {filteredModules?.map((module) => (
               <Module
                 key={module._id}

@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router";
+import { Outlet } from "react-router";
 import { useSelector } from "react-redux";
 
 function AdminRoute() {
@@ -8,7 +8,7 @@ function AdminRoute() {
     <Outlet />
   ) : (
     // <Navigate to="/login" replace />
-    <div>You are not authorized to view this page.</div>
+    <div className="text-center">You are not authorized to view this page.😒</div>
   );
 }
 
