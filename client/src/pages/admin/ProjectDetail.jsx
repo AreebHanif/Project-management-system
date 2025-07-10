@@ -6,6 +6,9 @@ import {
   FileText,
   Calendar,
   Filter,
+  Layers,
+  Check,
+  X,
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -221,6 +224,19 @@ const ProjectDetail = () => {
                   </div>
                 </div>
               </div>
+              <div className="flex items-center justify-between mb-5">
+                {project.active ? (
+                  <span className="inline-flex items-center px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-300 bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
+                    <Check className="w-3.5 h-3.5 mr-2" />
+                    Active
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-300 bg-red-50 text-red-700 border border-red-200 shadow-sm">
+                    <X className="w-3.5 h-3.5 mr-2" />
+                    Inactive
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Description  */}
@@ -292,7 +308,7 @@ const ProjectDetail = () => {
         {/* Modules Section */}
         {filteredModules?.length > 0 ? (
           <div className="grid ">
-            {filteredModules?.map((module) => (
+            {[...filteredModules || []].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((module) => (
               <Module
                 key={module._id}
                 module={module}
@@ -340,6 +356,7 @@ const ProjectDetail = () => {
           </div>
         )}
       </div>
+
       {isShowModal && (
         <ModuleModal
           isEdit={isEdit}

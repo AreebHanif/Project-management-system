@@ -138,12 +138,16 @@ const getModuleById = async (req, res) => {
     }
 };
 
-
 const teamAssignedToModule = async (req, res) => {
     try {
-        const { teamId, moduleId } = req.body
+        const { teamId, moduleId } = req.body;
         if (!teamId || !moduleId) {
             return res.status(400).json({ message: "Team id and module id are required" })
+        }
+
+        let isAlreadyAssigned = TeamAssignedToModule.findById({ teamId })
+        if (isAlreadyAssigned) {
+            return res.status(400).json({ message: "Team Already Assigned to this module." })
         }
         const teamAssigned = new TeamAssignedToModule({
             teamId, moduleId

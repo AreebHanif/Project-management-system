@@ -162,9 +162,8 @@ const ProjectListPage = () => {
                 projects?.map((project, index) => (
                   <div
                     key={project._id}
-                    className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${
-                      index % 2 === 0 ? "bg-gray-25" : "bg-white"
-                    }`}
+                    className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${index % 2 === 0 ? "bg-gray-25" : "bg-white"
+                      }`}
                   >
                     <div className="grid grid-cols-12 gap-4 items-center">
                       {/* Name Section */}
@@ -238,7 +237,6 @@ const ProjectListPage = () => {
                           onClick={() => {
                             setIsEdit(true);
                             setCurrentProject(project);
-                            console.log(project);
                             setShowCreateModal(true);
                           }}
                         >

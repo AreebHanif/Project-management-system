@@ -46,8 +46,8 @@ const ModuleDetail = () => {
   const { data: module, isLoading, error } = useGetModuleByIdQuery(moduleId);
   const [createTask] = useCreateTaskMutation();
   const [updateTaskById] = useUpdateTaskByIdMutation();
-  const { data: tasks, refetch } = useGetTasksListByIdQuery(moduleId);
   const [deleteTaskById] = useDeleteTaskByIdMutation();
+  const { data: tasks, refetch } = useGetTasksListByIdQuery(moduleId);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -435,14 +435,17 @@ const ModuleDetail = () => {
                   </p>
                 </div>
               ) : (
-                filteredTasks?.map((task, index) => {
+                [...filteredTasks || []].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((task, index) => {
                   const priorityConfig = getPriorityConfig(task.priority);
                   const PriorityIcon = priorityConfig.icon;
 
                   return (
                     <div
                       key={task._id}
-                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${index % 2 === 0 ? "bg-gray-25" : "bg-white"
+                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${task.active
+                        ? "hover:scale-[1.02] shadow-sm hover:shadow-xl hover:border-indigo-200 cursor-pointer"
+                        : "opacity-60 cursor-not-allowed shadow-sm"
+                        } ${index % 2 === 0 ? "bg-gray-25" : "bg-white"
                         }`}
                     >
                       <div className="grid grid-cols-12 gap-4 items-center">

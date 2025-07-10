@@ -86,7 +86,6 @@ export default function SignupPage() {
         password: "",
         designation: "",
       });
-      navigate("/dashboard");
     } catch (error) {
       toast.error(error?.message || error?.data?.message);
     } finally {
@@ -153,9 +152,8 @@ export default function SignupPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.name ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.name ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Enter your full name"
                 />
                 <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -180,9 +178,8 @@ export default function SignupPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="your.email@company.com"
                 />
                 <Mail className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -207,9 +204,8 @@ export default function SignupPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 pl-12 pr-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-12 pr-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.password ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Create a strong password"
                 />
                 <Lock className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -233,13 +229,12 @@ export default function SignupPage() {
                       Password strength:
                     </span>
                     <span
-                      className={`text-sm font-medium ${
-                        passwordStrength() <= 2
+                      className={`text-sm font-medium ${passwordStrength() <= 2
                           ? "text-red-500"
                           : passwordStrength() <= 3
-                          ? "text-yellow-500"
-                          : "text-green-500"
-                      }`}
+                            ? "text-yellow-500"
+                            : "text-green-500"
+                        }`}
                     >
                       {getStrengthText()}
                     </span>
@@ -272,9 +267,8 @@ export default function SignupPage() {
                   name="designation"
                   value={formData.designation}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${
-                    errors.designation ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${errors.designation ? "border-red-500" : "border-gray-300"
+                    }`}
                 >
                   <option value="">Select your designation</option>
                   {designations.map((designation) => (

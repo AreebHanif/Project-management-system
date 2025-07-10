@@ -209,227 +209,224 @@ export default function TeamList() {
                   </p>
                 </div>
               ) : (
-                // When there is team available
-                teams?.map((team, idx) => (
-                  <div
-                    key={team._id}
-                    className="border-b border-gray-200 last:border-b-0"
-                  >
-                    {/* Team Row */}
+                [...teams || []]?.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))
+                  ?.map((team, idx) => (
                     <div
-                      className={`px-6 py-4 ${
-                        idx % 2 === 0 ? "bg-gray-25" : "bg-white"
-                      } hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all`}
+                      key={team._id}
+                      className={`border-b border-gray-200 last:border-b-0 ${team.active
+                        ? "hover:scale-[1.02] shadow-sm hover:shadow-xl hover:border-indigo-200 cursor-pointer"
+                        : "opacity-60 cursor-not-allowed shadow-sm"
+                        }`}
                     >
-                      <div className="grid grid-cols-12 gap-4 items-center">
-                        <div className="col-span-1">
-                          <button
-                            onClick={() => toggleTeamExpansion(team._id)}
-                            className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
-                            aria-label={`${
-                              expandedTeamId === team._id
+                      {/* Team Row */}
+                      <div
+                        className={`px-6 py-4 ${idx % 2 === 0 ? "bg-gray-25" : "bg-white"
+                          } hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all`}
+                      >
+                        <div className="grid grid-cols-12 gap-4 items-center">
+                          <div className="col-span-1">
+                            <button
+                              onClick={() => toggleTeamExpansion(team._id)}
+                              className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
+                              aria-label={`${expandedTeamId === team._id
                                 ? "Collapse"
                                 : "Expand"
-                            } ${team.teamName} members`}
-                          >
-                            {expandedTeamId === team._id ? (
-                              <ChevronDown className="w-4 h-4" />
-                            ) : (
-                              <ChevronRight className="w-4 h-4" />
-                            )}
-                          </button>
-                        </div>
-                        {/* Name */}
-                        <div className="col-span-4 flex items-center">
-                          <div className="w-10 h-10 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
-                            <Users className="w-5 h-5 text-indigo-600" />
+                                } ${team.teamName} members`}
+                            >
+                              {expandedTeamId === team._id ? (
+                                <ChevronDown className="w-4 h-4" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4" />
+                              )}
+                            </button>
                           </div>
-                          <p className="font-medium text-gray-900">
-                            {team.teamName}
-                          </p>
-                        </div>
-                        {/* Status */}
-                        <div className="col-span-2 text-center">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                              team.active
+                          {/* Name */}
+                          <div className="col-span-4 flex items-center">
+                            <div className="w-10 h-10 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
+                              <Users className="w-5 h-5 text-indigo-600" />
+                            </div>
+                            <p className="font-medium text-gray-900">
+                              {team.teamName}
+                            </p>
+                          </div>
+                          {/* Status */}
+                          <div className="col-span-2 text-center">
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${team.active
                                 ? "bg-green-100 text-green-700"
                                 : "bg-red-100 text-red-700"
-                            }`}
-                            aria-label={`Team status: ${
-                              team.active ? "Active" : "Inactive"
-                            }`}
-                          >
-                            {team.active ? (
-                              <>
-                                <Check className="w-3 h-3 mr-1" />
-                                Active
-                              </>
-                            ) : (
-                              <>
-                                <X className="w-3 h-3 mr-1" />
-                                Inactive
-                              </>
-                            )}
-                          </span>
-                        </div>
-                        {/* Actions */}
-                        <div className="col-span-3 flex items-center justify-center space-x-2">
-                          <button
-                            onClick={() => handleEditTeam(team)}
-                            className="p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
-                            aria-label={`Edit ${team.teamName}`}
-                            title="Edit team"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleDeleteTeam(team._id, team.teamName)
-                            }
-                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                            aria-label={`Delete ${team.teamName}`}
-                            title="Delete team"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                        {/* Add Members Button */}
-                        <div className="col-span-2 flex items-center justify-center">
-                          <button
-                            onClick={() =>
-                              handleAddMemberToTeam(team._id, team.teamName)
-                            }
-                            className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
-                            aria-label={`Add member to ${team.teamName}`}
-                            title="Add member to team"
-                          >
-                            <Plus className="w-5 h-5" />
-                          </button>
+                                }`}
+                              aria-label={`Team status: ${team.active ? "Active" : "Inactive"
+                                }`}
+                            >
+                              {team.active ? (
+                                <>
+                                  <Check className="w-3 h-3 mr-1" />
+                                  Active
+                                </>
+                              ) : (
+                                <>
+                                  <X className="w-3 h-3 mr-1" />
+                                  Inactive
+                                </>
+                              )}
+                            </span>
+                          </div>
+                          {/* Actions */}
+                          <div className="col-span-3 flex items-center justify-center space-x-2">
+                            <button
+                              onClick={() => handleEditTeam(team)}
+                              className="p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
+                              aria-label={`Edit ${team.teamName}`}
+                              title="Edit team"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteTeam(team._id, team.teamName)
+                              }
+                              className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                              aria-label={`Delete ${team.teamName}`}
+                              title="Delete team"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                          {/* Add Members Button */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <button
+                              onClick={() =>
+                                handleAddMemberToTeam(team._id, team.teamName)
+                              }
+                              className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                              aria-label={`Add member to ${team.teamName}`}
+                              title="Add member to team"
+                            >
+                              <Plus className="w-5 h-5" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Member List */}
-                    {expandedTeamId === team._id && (
-                      <div className="bg-gray-50 border-t border-gray-200">
-                        <div className="px-6 py-4">
-                          <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-                            <User className="w-4 h-4 mr-2" />
-                            Team Members ({teamMembers?.length || 0})
-                          </h4>
-                          {isFetchingMembers ? (
-                            <div
-                              className="space-y-2"
-                              aria-label="Loading team members"
-                            >
-                              {[...Array(3)].map((_, idx) => (
-                                <MemberSkeleton key={idx} />
-                              ))}
-                            </div>
-                          ) : teamMembers?.length === 0 ? (
-                            <div className="text-center py-6">
-                              <User className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                              <p className="text-gray-500 text-sm">
-                                No members in this team
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="space-y-2">
-                              {teamMembers?.map((member, index) => {
-                                return (
-                                  <div
-                                    key={member.id || index}
-                                    className="bg-white rounded-lg p-3 border border-gray-200 hover:border-indigo-200 transition-colors"
-                                  >
-                                    <div className="grid grid-cols-12 gap-4 items-center">
-                                      {/* Name */}
-                                      <div className="col-span-4 flex items-center">
-                                        <div className="w-8 h-8 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
-                                          <span className="text-indigo-600 font-medium text-xs">
-                                            {member.name
-                                              ?.split(" ")
-                                              .map((n) => n[0])
-                                              .join("")
-                                              .toUpperCase() || "U"}
+                      {/* Member List */}
+                      {expandedTeamId === team._id && (
+                        <div className="bg-gray-50 border-t border-gray-200">
+                          <div className="px-6 py-4">
+                            <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                              <User className="w-4 h-4 mr-2" />
+                              Team Members ({teamMembers?.length || 0})
+                            </h4>
+                            {isFetchingMembers ? (
+                              <div
+                                className="space-y-2"
+                                aria-label="Loading team members"
+                              >
+                                {[...Array(3)].map((_, idx) => (
+                                  <MemberSkeleton key={idx} />
+                                ))}
+                              </div>
+                            ) : teamMembers?.length === 0 ? (
+                              <div className="text-center py-6">
+                                <User className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                                <p className="text-gray-500 text-sm">
+                                  No members in this team
+                                </p>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                {teamMembers?.map((member, index) => {
+                                  return (
+                                    <div
+                                      key={member.id || index}
+                                      className="bg-white rounded-lg p-3 border border-gray-200 hover:border-indigo-200 transition-colors"
+                                    >
+                                      <div className="grid grid-cols-12 gap-4 items-center">
+                                        {/* Name */}
+                                        <div className="col-span-4 flex items-center">
+                                          <div className="w-8 h-8 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
+                                            <span className="text-indigo-600 font-medium text-xs">
+                                              {member.name
+                                                ?.split(" ")
+                                                .map((n) => n[0])
+                                                .join("")
+                                                .toUpperCase() || "U"}
+                                            </span>
+                                          </div>
+                                          <p className="text-sm font-medium text-gray-900">
+                                            {member.name || "Unknown"}
+                                          </p>
+                                        </div>
+                                        {/* Email */}
+                                        <div className="col-span-4 flex items-center">
+                                          <Mail className="w-3 h-3 text-gray-400 mr-2" />
+                                          <span
+                                            className="text-sm text-gray-600"
+                                            title={member.email}
+                                          >
+                                            {truncateText(member.email, 25) ||
+                                              "No email"}
                                           </span>
                                         </div>
-                                        <p className="text-sm font-medium text-gray-900">
-                                          {member.name || "Unknown"}
-                                        </p>
-                                      </div>
-                                      {/* Email */}
-                                      <div className="col-span-4 flex items-center">
-                                        <Mail className="w-3 h-3 text-gray-400 mr-2" />
-                                        <span
-                                          className="text-sm text-gray-600"
-                                          title={member.email}
-                                        >
-                                          {truncateText(member.email, 25) ||
-                                            "No email"}
-                                        </span>
-                                      </div>
-                                      {/* Designation */}
-                                      <div className="col-span-2 flex items-center">
-                                        <Briefcase className="w-3 h-3 text-gray-400 mr-2" />
-                                        <span
-                                          className="text-sm text-gray-600"
-                                          title={member.designation}
-                                        >
-                                          {truncateText(
-                                            member.designation,
-                                            20
-                                          ) || "N/A"}
-                                        </span>
-                                      </div>
-                                      {/* Status */}
-                                      <div className="col-span-1 text-center">
-                                        <span
-                                          className={`inline-block w-2 h-2 rounded-full ${
-                                            member.active
+                                        {/* Designation */}
+                                        <div className="col-span-2 flex items-center">
+                                          <Briefcase className="w-3 h-3 text-gray-400 mr-2" />
+                                          <span
+                                            className="text-sm text-gray-600"
+                                            title={member.designation}
+                                          >
+                                            {truncateText(
+                                              member.designation,
+                                              20
+                                            ) || "N/A"}
+                                          </span>
+                                        </div>
+                                        {/* Status */}
+                                        <div className="col-span-1 text-center">
+                                          <span
+                                            className={`inline-block w-2 h-2 rounded-full ${member.active
                                               ? "bg-green-500"
                                               : "bg-red-500"
-                                          }`}
-                                          title={
-                                            member.active
+                                              }`}
+                                            title={
+                                              member.active
+                                                ? "Active"
+                                                : "Inactive"
+                                            }
+                                            aria-label={`User status: ${member.active
                                               ? "Active"
                                               : "Inactive"
-                                          }
-                                          aria-label={`User status: ${
-                                            member.active
-                                              ? "Active"
-                                              : "Inactive"
-                                          }`}
-                                        />
-                                      </div>
-                                      {/* Member Actions */}
-                                      <div className="col-span-1 flex items-center justify-center space-x-1">
-                                        <button
-                                          onClick={() =>
-                                            handleDeleteMember(
-                                              team._id,
-                                              member.userId || member.id,
-                                              member.name
-                                            )
-                                          }
-                                          className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-                                          aria-label={`Remove ${member.name} from team`}
-                                          title="Remove member from team"
-                                        >
-                                          <Trash2 className="w-3 h-3" />
-                                        </button>
+                                              }`}
+                                          />
+                                        </div>
+                                        {/* Member Actions */}
+                                        <div className="col-span-1 flex items-center justify-center space-x-1">
+                                          <button
+                                            onClick={() =>
+                                              handleDeleteMember(
+                                                team._id,
+                                                member.userId || member.id,
+                                                member.name
+                                              )
+                                            }
+                                            className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                                            aria-label={`Remove ${member.name} from team`}
+                                            title="Remove member from team"
+                                          >
+                                            <Trash2 className="w-3 h-3" />
+                                          </button>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                ))
+                      )}
+                    </div>
+                  ))
               )}
             </div>
           </div>

@@ -8,7 +8,7 @@ const TaskAssignmentSchema = new Schema({
     userAssignedTo: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     assignedDate: { type: Date, default: Date.now },
     taskStatus: { type: String, enum: ['Completed', 'Pending', 'InProgress'], default: 'Pending' },
-    taskProgress: { type: Number, default: 0 }, // percentage
+    taskProgress: { type: Number, default: 0 },
     completionDate: { type: Date },
 }, { timestamps: true });
 

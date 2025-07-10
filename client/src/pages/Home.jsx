@@ -5,7 +5,6 @@ import {
   FolderOpen,
   Calendar,
   BarChart3,
-  ArrowRight,
   Play,
   Star,
   Award,
@@ -14,6 +13,7 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -75,14 +75,12 @@ const Home = () => {
               tasks, and collaborate seamlessly with your team.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="bg-gradient-to-r from-indigo-600 to-cyan-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-cyan-700 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center">
-                <Play className="w-5 h-5 mr-2" />
-                Start Your Project
-              </button>
-              <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:border-indigo-600 hover:text-indigo-600 transition-all duration-200 flex items-center">
-                Watch Demo
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
+              <Link to={'/dashboard'}>
+                <button className="bg-gradient-to-r from-indigo-600 to-cyan-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-cyan-700 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center">
+                  <Play className="w-5 h-5 mr-2" />
+                  Go to dashboard
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -129,27 +127,24 @@ const Home = () => {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
-                    activeFeature === index
-                      ? "border-indigo-600 bg-white shadow-lg scale-105"
-                      : "border-gray-200 bg-white hover:border-indigo-300"
-                  }`}
+                  className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${activeFeature === index
+                    ? "border-indigo-600 bg-white shadow-lg scale-105"
+                    : "border-gray-200 bg-white hover:border-indigo-300"
+                    }`}
                   onClick={() => setActiveFeature(index)}
                 >
                   <div className="flex items-start">
                     <div
-                      className={`p-3 rounded-xl mr-4 ${
-                        activeFeature === index
-                          ? "bg-gradient-to-r from-indigo-600 to-cyan-600"
-                          : "bg-gray-100"
-                      }`}
+                      className={`p-3 rounded-xl mr-4 ${activeFeature === index
+                        ? "bg-gradient-to-r from-indigo-600 to-cyan-600"
+                        : "bg-gray-100"
+                        }`}
                     >
                       <feature.icon
-                        className={`w-6 h-6 ${
-                          activeFeature === index
-                            ? "text-white"
-                            : "text-gray-600"
-                        }`}
+                        className={`w-6 h-6 ${activeFeature === index
+                          ? "text-white"
+                          : "text-gray-600"
+                          }`}
                       />
                     </div>
                     <div>

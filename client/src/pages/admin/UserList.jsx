@@ -10,6 +10,7 @@ import {
   Filter,
   Edit2,
   Trash2,
+  ArrowLeft,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -68,8 +69,21 @@ export default function UserManagementPage() {
     return matchesSearch && matchesFilter;
   });
 
+  const handleGoBack = () => {
+    window.history.back();
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-6">
+      <div className="flex items-center mb-6 ml-8">
+        <button
+          onClick={handleGoBack}
+          className=" cursor-pointer flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
+        >
+          <ArrowLeft className="w-5 h-5 mr-1" />
+          Back to DashBoard
+        </button>
+      </div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -160,81 +174,83 @@ export default function UserManagementPage() {
                   </p>
                 </div>
               ) : (
-                filteredUsers?.map((user, index) => (
-                  <div
-                    key={user?._id}
-                    className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${
-                      index % 2 === 0 ? "bg-gray-25" : "bg-white"
-                    }`}
-                  >
-                    <div className="grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-3 flex items-center">
-                        <div className="w-10 h-10 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-indigo-600 font-medium text-sm">
-                            {user?.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                [...filteredUsers || []]
+                  ?.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((user, index) => (
+                    <div
+                      key={user?._id}
+                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all ${user.active
+                        ? "hover:scale-[1.02] hover:shadow-xl hover:border-indigo-200 cursor-pointer"
+                        : "opacity-60 cursor-not-allowed shadow-sm"
+                        } duration-200 ${index % 2 === 0 ? "bg-gray-25" : "bg-white"
+                        }`}
+                    >
+                      <div className="grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-3 flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
+                            <span className="text-indigo-600 font-medium text-sm">
+                              {user?.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </span>
+                          </div>
+                          <p className="font-medium text-gray-900">
+                            {user?.name}
+                          </p>
+                        </div>
+                        <div
+                          className="col-span-3 text-gray-600"
+                          title={user?.email}
+                        >
+                          {truncateText(user?.email)}
+                        </div>
+                        <div className="col-span-2">
+                          <span
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-indigo-100 to-cyan-100 text-indigo-700"
+                            title={user?.designation}
+                          >
+                            {truncateText(user?.designation, 12)}
                           </span>
                         </div>
-                        <p className="font-medium text-gray-900">
-                          {user?.name}
-                        </p>
-                      </div>
-                      <div
-                        className="col-span-3 text-gray-600"
-                        title={user?.email}
-                      >
-                        {truncateText(user?.email)}
-                      </div>
-                      <div className="col-span-2">
-                        <span
-                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-indigo-100 to-cyan-100 text-indigo-700"
-                          title={user?.designation}
-                        >
-                          {truncateText(user?.designation, 12)}
-                        </span>
-                      </div>
-                      <div className="col-span-2 text-center">
-                        <button
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
-                            user?.active
+                        <div className="col-span-2 text-center">
+                          <button
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${user?.active
                               ? "bg-green-100 text-green-700 hover:bg-green-200"
                               : "bg-red-100 text-red-700 hover:bg-red-200"
-                          }`}
-                        >
-                          {user?.active ? (
-                            <>
-                              <Check className="w-3 h-3 mr-1" />
-                              Active
-                            </>
-                          ) : (
-                            <>
-                              <X className="w-3 h-3 mr-1" />
-                              Inactive
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <div className="col-span-2 flex items-center justify-center space-x-2">
-                        <button
-                          onClick={() => handleEditUser(user)}
-                          className="p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg"
-                          title="Edit user"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user?._id)}
-                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
-                          title="Delete user"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                              }`}
+                          >
+                            {user?.active ? (
+                              <>
+                                <Check className="w-3 h-3 mr-1" />
+                                Active
+                              </>
+                            ) : (
+                              <>
+                                <X className="w-3 h-3 mr-1" />
+                                Inactive
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <div className="col-span-2 flex items-center justify-center space-x-2">
+                          <button
+                            onClick={() => handleEditUser(user)}
+                            className="p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg"
+                            title="Edit user"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(user?._id)}
+                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                            title="Delete user"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))
               )}
             </div>
           </div>

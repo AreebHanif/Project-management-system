@@ -27,7 +27,7 @@ const AddTeamLeaderModal = ({
   const { data: teams = [], isLoading: teamsLoading } = useGetTeamListQuery();
   const { data: members = [], isLoading: membersLoading } =
     useGetMembersByTeamIdQuery(selectedTeamId, {
-      skip: !selectedTeamId, // Skip the query if no team is selected
+      skip: !selectedTeamId,
     });
   const [teamAssignedToModule] = useTeamAssignedToModuleMutation();
   const [teamLeaderAssignedToModule] = useTeamLeaderAssignedToModuleMutation();
@@ -80,9 +80,7 @@ const AddTeamLeaderModal = ({
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       // First assign team to module
       const teamRes = await teamAssignedToModule({
@@ -164,13 +162,11 @@ const AddTeamLeaderModal = ({
                   value={selectedTeamId}
                   onChange={handleTeamSelect}
                   disabled={teamsLoading || isLoading || isSubmitting}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${
-                    errors?.team ? "border-red-500" : "border-gray-300"
-                  } ${
-                    teamsLoading || isLoading || isSubmitting
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${errors?.team ? "border-red-500" : "border-gray-300"
+                    } ${teamsLoading || isLoading || isSubmitting
                       ? "cursor-not-allowed bg-gray-50"
                       : ""
-                  }`}
+                    }`}
                 >
                   <option value="" disabled>
                     {teamsLoading ? "Loading teams..." : "Select a team"}
@@ -223,23 +219,21 @@ const AddTeamLeaderModal = ({
                     isLoading ||
                     isSubmitting
                   }
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${
-                    errors.member ? "border-red-500" : "border-gray-300"
-                  } ${
-                    !selectedTeamId ||
-                    membersLoading ||
-                    isLoading ||
-                    isSubmitting
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${errors.member ? "border-red-500" : "border-gray-300"
+                    } ${!selectedTeamId ||
+                      membersLoading ||
+                      isLoading ||
+                      isSubmitting
                       ? "bg-gray-50 cursor-not-allowed"
                       : ""
-                  }`}
+                    }`}
                 >
                   <option value="" disabled>
                     {!selectedTeamId
                       ? "Select a team first"
                       : membersLoading
-                      ? "Loading members..."
-                      : "Select a team leader"}
+                        ? "Loading members..."
+                        : "Select a team leader"}
                   </option>
                   {members.map((member) => (
                     <option

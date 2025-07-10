@@ -11,6 +11,7 @@ import projectRoutes from './Routes/projectRoutes.js'
 import moduleRoutes from "./Routes/moduleRoutes.js"
 import teamRoutes from './Routes/teamRoutes.js'
 import taskRoutes from './Routes/taskRoutes.js'
+import adminRoutes from './Routes/adminRoutes.js'
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -30,6 +31,7 @@ app.use('/api/projects', projectRoutes)
 app.use('/api/modules', moduleRoutes)
 app.use('/api/teams', teamRoutes)
 app.use('/api/tasks', taskRoutes)
+app.use('/api/dashboard', adminRoutes)
 
 app.get('/', (req, res) => {
     res.send("<h1>Backend is running successfully.</h1>")
