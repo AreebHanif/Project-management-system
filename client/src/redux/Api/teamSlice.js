@@ -11,6 +11,7 @@ let teamSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Team"]
         }),
+
         updateTeamById: builder.mutation({
             query: ({ teamId, data }) => ({
                 url: `${TEAM_URL}/${teamId}`,
@@ -19,6 +20,7 @@ let teamSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Team"]
         }),
+
         deleteTeamById: builder.mutation({
             query: (id) => ({
                 url: `${TEAM_URL}/${id}`,
@@ -27,6 +29,7 @@ let teamSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Team"]
         }),
+
         getTeamList: builder.query({
             query: () => ({
                 url: `${TEAM_URL}`,
@@ -34,6 +37,7 @@ let teamSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ["Team"]
         }),
+
         getTeamById: builder.query({
             query: (id) => ({
                 url: `${TEAM_URL}/${id}`,
@@ -41,14 +45,16 @@ let teamSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ["Team"]
         }),
+
         addMemberToTeam: builder.mutation({
-            query: ({ teamId, userId }) => ({
+            query: ({ teamId, userId, isLeader }) => ({
                 url: `${TEAM_URL}/add-member`,
                 method: "POST",
-                body: { teamId, userId }
+                body: { teamId, userId, isLeader }
             }),
             invalidatesTags: ["Team"]
         }),
+
         getMembersByTeamId: builder.query({
             query: (teamId) => ({
                 url: `${TEAM_URL}/${teamId}/members`,
@@ -56,6 +62,16 @@ let teamSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ["Team"]
         }),
+
+        updateTeamLeaderStatusById: builder.mutation({
+            query: ({ isLeader, teamId, userId }) => ({
+                url: `${TEAM_URL}`,
+                method: "PUT",
+                body: { isLeader, teamId, userId }
+            }),
+            invalidatesTags: ["Team"]
+        }),
+
         removeMemberFromTeamById: builder.mutation({
             query: ({ teamId, userId }) => ({
                 url: `${TEAM_URL}/remove-member/${teamId}/${userId}`,
@@ -75,5 +91,6 @@ export const {
     useGetMembersByTeamIdQuery,
     useRemoveMemberFromTeamByIdMutation,
     useGetTeamListQuery,
+    useUpdateTeamLeaderStatusByIdMutation,
     useGetTeamByIdQuery,
 } = teamSlice

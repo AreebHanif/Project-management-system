@@ -1,5 +1,5 @@
 import express from 'express'
-import { adminDashboard, userDashboard } from "../Controllers/DashboardController.js";
+import { adminDashboard, userDashboard, contactMessage } from "../Controllers/DashboardController.js";
 import { isAuthenticated, isAdmin } from '../middleware/authMiddleware.js'
 
 let router = express.Router()
@@ -9,5 +9,8 @@ router.route('/')
 
 router.route('/user')
     .get(isAuthenticated, userDashboard)
+
+router.route('/contact')
+    .post(contactMessage)
 
 export default router

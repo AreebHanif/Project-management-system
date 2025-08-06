@@ -9,8 +9,24 @@ let dashboardSlice = apiSlice.injectEndpoints({
                 method: "GET",
             }),
             providesTags: ["Dashboard"]
+        }),
+
+        getUserDashboardData: builder.query({
+            query: () => ({
+                url: `${DASHBOARD_URL}/user`,
+                method: "GET",
+            }),
+            providesTags: ["Dashboard"]
+        }),
+
+        contactMessage: builder.mutation({
+            query: (data) => ({
+                url: `${DASHBOARD_URL}/contact`,
+                method: "POST",
+                body: data
+            })
         })
     })
 })
 
-export const { useGetAdminDashboardDataQuery } = dashboardSlice
+export const { useGetAdminDashboardDataQuery, useGetUserDashboardDataQuery, useContactMessageMutation } = dashboardSlice

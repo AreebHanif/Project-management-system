@@ -6,6 +6,7 @@ import {
   LogIn,
   Settings,
   LogOut,
+  Mail
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -67,6 +68,10 @@ const Navigation = () => {
     }
   };
 
+  const handleContact = () => {
+    navigate('/contact')
+  }
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,10 +85,6 @@ const Navigation = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <Bell className="w-5 h-5" />
-            </button>
-
             {/* Authenticated user - show settings dropdown */}
             {userInfo ? (
               <div className="relative" ref={dropdownRef}>
@@ -122,6 +123,13 @@ const Navigation = () => {
                       >
                         <LayoutDashboard className="w-4 h-4 mr-3" />
                         Dashboard
+                      </button>
+                      <button
+                        onClick={handleContact}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <Mail className="w-4 h-4 mr-3" />
+                        Contact
                       </button>
                       <div className="border-t border-gray-100"></div>
                       <button

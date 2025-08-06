@@ -14,6 +14,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Home = () => {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -53,9 +54,19 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7 }}
+    >
       {/* Hero Section */}
-      <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8">
+      <motion.section
+        className="pt-20 pb-32 px-4 sm:px-6 lg:px-8"
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.7, delay: 0.1 }}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <div className="inline-flex items-center bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full text-sm font-medium mb-8">
@@ -84,14 +95,27 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <motion.section
+        className="py-16 bg-white"
+        initial={{ y: 40, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
+              <motion.div
+                key={index}
+                className="text-center"
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-2xl mb-4">
                   <stat.icon className="w-8 h-8 text-indigo-600" />
                 </div>
@@ -99,14 +123,20 @@ const Home = () => {
                   {stat.number}
                 </div>
                 <div className="text-gray-600">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Features Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-indigo-50">
+      <motion.section
+        className="py-24 bg-gradient-to-br from-gray-50 to-indigo-50"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -125,12 +155,17 @@ const Home = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               {features.map((feature, index) => (
-                <div
+                <motion.div
                   key={index}
                   className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${activeFeature === index
                     ? "border-indigo-600 bg-white shadow-lg scale-105"
                     : "border-gray-200 bg-white hover:border-indigo-300"
                     }`}
+                  whileHover={{ scale: 1.04, boxShadow: "0 8px 32px rgba(80,80,200,0.08)" }}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
                   onClick={() => setActiveFeature(index)}
                 >
                   <div className="flex items-start">
@@ -154,11 +189,17 @@ const Home = () => {
                       <p className="text-gray-600">{feature.description}</p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
-            <div className="relative">
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
               <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
                 <div className="bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-2xl p-6 text-white mb-6">
                   <div className="flex items-center justify-between mb-4">
@@ -220,13 +261,19 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-indigo-600 to-cyan-600">
+      <motion.section
+        className="py-24 bg-gradient-to-r from-indigo-600 to-cyan-600"
+        initial={{ scale: 0.98, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+      >
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Transform Your Project Management?
@@ -244,88 +291,8 @@ const Home = () => {
             </button>
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="col-span-2">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-xl flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-white" />
-                </div>
-                <span className="ml-3 text-xl font-bold">ProjectFlow</span>
-              </div>
-              <p className="text-gray-400 mb-4 max-w-md">
-                Empowering teams to deliver exceptional projects through
-                intelligent project management and seamless collaboration.
-              </p>
-              <div className="flex items-center text-gray-400">
-                <Shield className="w-5 h-5 mr-2" />
-                <span>Enterprise-grade security</span>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Integrations
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    API
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>
-              &copy; 2025 ProjectFlow. All rights reserved. Built for your Final
-              Year Project.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 };
 

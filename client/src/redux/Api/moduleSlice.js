@@ -53,14 +53,7 @@ const moduleSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Module"]
         }),
-        teamLeaderAssignedToModule: builder.mutation({
-            query: ({ teamLeaderId, moduleId }) => ({
-                url: `${MODULE_URL}/team-leader`,
-                method: "POST",
-                body: { teamLeaderId, moduleId }
-            }),
-            invalidatesTags: ["Module"]
-        })
+
     })
 });
 

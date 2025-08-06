@@ -3,6 +3,7 @@ import TaskAssignment from '../models/TaskAssignment.js'
 import Role from '../models/Role.js'
 import UserRoles from '../models/UserRoles.js'
 import TeamAssignedToModule from '../models/TeamAssignedToModule.js'
+import { taskAssigned } from '../utils/Notification.js'
 
 const createTask = async (req, res) => {
     try {
@@ -82,7 +83,6 @@ const getTaskById = async (req, res) => {
             return res.status(400).json({ message: "Module ID and Task ID are required" });
         }
 
-        // 1. Fetch task and populate module and project
         const task = await Task.findOne({ _id: taskId, moduleId })
             .populate({
                 path: "moduleId",
@@ -102,8 +102,12 @@ const getTaskById = async (req, res) => {
         if (!task) {
             return res.status(404).json({ message: "Task not found" });
         }
+        let teamAssigned = await TeamAssignedToModule.findOne({ moduleId })
+        let teamId = null;
+        if (teamAssigned) {
+            teamId = teamAssigned.teamId
+        }
 
-        // 2. Get task assignment and populate assigned user
         const taskAssignment = await TaskAssignment.findOne({ taskId })
             .select("userAssignedTo assignedDate completionDate taskStatus taskProgress")
             .populate("userAssignedTo", "name");
@@ -119,6 +123,7 @@ const getTaskById = async (req, res) => {
             description: task?.description || null,
             isActive: task?.active || false,
             priority: task?.priority || null,
+            teamId: teamId || null,
 
             // Assignment info
             userName: taskAssignment?.userAssignedTo?.name || null,
@@ -142,7 +147,7 @@ const taskAssignedToUser = async (req, res) => {
         const { id } = req.params;
         const { projectId, moduleId, taskId, teamId, roleName, completionDate } = req.body;
 
-        if (!id || !projectId || !moduleId || !taskId || !teamId || !roleName, !completionDate) {
+        if (!id || !projectId || !moduleId || !taskId || !teamId || !roleName || !completionDate) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
@@ -180,7 +185,7 @@ const taskAssignedToUser = async (req, res) => {
         }
 
         // Avoid duplicate user-role assignment
-        const existingUserRole = await UserRoles.findOne({ userId: id, roleId: role._id });
+        const existingUserRole = await UserRoles.findOne({ userId: id, roleId: role._id }).populate("userId", "name email");
         if (!existingUserRole) {
             const userRole = new UserRoles({ userId: id, roleId: role._id });
             await userRole.save();
@@ -191,7 +196,11 @@ const taskAssignedToUser = async (req, res) => {
                 userRole,
             });
         }
-
+        let values = await Task.findOne({ taskId }).populate([
+            { path: "moduleId", select: "moduleName projectId", populate: { path: "projectId", select: "projectName" } },
+        ]);
+        // Email call
+        taskAssigned(existingUserRole.userId.email, existingUserRole.userId.name, values.name, values.moduleId.moduleName, values.moduleId.projectId.projectName);
         return res.status(201).json({
             message: "Task assigned successfully (role already assigned)",
             taskAssignment: savedTaskAssignment,

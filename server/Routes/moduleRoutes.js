@@ -8,7 +8,7 @@ import {
     teamAssignedToModule
 } from "../Controllers/ProjectSectionController.js"
 import { isAdmin, isAuthenticated } from "../middleware/authMiddleware.js"
-import { teamLeaderAssignedToModule } from "../Controllers/ProjectSectionController.js"
+// import { teamLeaderAssignedToModule } from "../Controllers/ProjectSectionController.js"
 
 const router = express.Router()
 
@@ -27,7 +27,7 @@ router.route('/module/:id')
 router.route('/team-module')
     .post(isAuthenticated, isAdmin, teamAssignedToModule)
 
-router.route('/team-leader')
-    .post(isAuthenticated, isAdmin, teamLeaderAssignedToModule)
+// router.route('/team-leader')
+//     .post(isAuthenticated, isAdmin, teamLeaderAssignedToModule)
 
 export default router

@@ -12,5 +12,3 @@ const UserSchema = new Schema({
 }, { timestamps: true });
 
 export default mongoose.model('User', UserSchema);
-// This schema defines the structure of the User document in MongoDB.
-// It includes fields for name, designation, password, email, image, and active status.

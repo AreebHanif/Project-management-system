@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.route('/')
     .post(isAuthenticated, isAdmin, createProject)
-    .get(isAuthenticated, getAllProjects)
+    .get(isAuthenticated, isAdmin, getAllProjects)
 router.route('/:id')
     .put(isAuthenticated, isAdmin, updateProjectById)
     .delete(isAuthenticated, isAdmin, deleteProjectById)

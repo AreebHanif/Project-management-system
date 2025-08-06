@@ -9,14 +9,12 @@ import {
   Circle,
   ArrowRight,
   TrendingUp,
-  Clock,
   Target,
   AlertTriangle,
   CalendarDays,
-  Timer,
   Plus,
-  UserPlus,
   Edit,
+  ArrowLeft,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -24,6 +22,7 @@ import { toast } from "react-toastify";
 import { useGetTaskByIdQuery } from "../../redux/Api/taskSlice";
 import TaskAssignModal from "../../components/Modal/TaskAssignModal";
 import TaskUpdateModal from "../../components/Modal/TaskUpdateModal";
+import { motion } from "framer-motion";
 
 export default function TaskDetails() {
   const [isAssigned, setIsAssigned] = useState(false);
@@ -52,7 +51,7 @@ export default function TaskDetails() {
       setStatus(taskDetails?.taskStatus || "Pending");
       setIsTaskCompleted(
         taskDetails?.taskProgress === 100 ||
-          taskDetails?.taskStatus === "Completed"
+        taskDetails?.taskStatus === "Completed"
       );
     }
   }, [taskDetails, progress]);
@@ -106,12 +105,20 @@ export default function TaskDetails() {
 
   // Handle assign team member click
   const handleAssignTeamMember = () => {
-    setShowModal(true);
+    if (!taskDetails?.teamId) {
+      toast.info("First assign a team to this task's module")
+    } else {
+      setShowModal(true);
+    }
   };
 
   // Handle edit task click
   const handleEditTask = () => {
-    setShowUpdateModal(true);
+    if (!taskDetails?.teamId) {
+      toast.info("Assign a user first!")
+    } else {
+      setShowUpdateModal(true);
+    }
   };
 
   const handleTaskCompletion = async () => {
@@ -138,11 +145,41 @@ export default function TaskDetails() {
     }
   };
 
+  const handleGoBack = () => {
+    window.history.back()
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6">
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7 }}
+    >
       <div className="max-w-6xl mx-auto space-y-6">
+        <motion.div
+          className="flex items-center mb-6"
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <button
+            onClick={handleGoBack}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" />
+            Go Back
+          </button>
+        </motion.div>
         {/* Header Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-6 md:p-8">
+        <motion.div
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-6 md:p-8"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
           {/* Breadcrumb Navigation */}
           <div className="flex items-center text-sm text-slate-500 mb-6">
             <span className="font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer">
@@ -187,9 +224,8 @@ export default function TaskDetails() {
 
                   {/* Active/Inactive Status */}
                   <span
-                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border border-red-200 text-white ${
-                      taskDetails?.isActive ? "bg-green-500" : "bg-red-500"
-                    } shadow-sm`}
+                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border border-red-200 text-white ${taskDetails?.isActive ? "bg-green-500" : "bg-red-500"
+                      } shadow-sm`}
                   >
                     {taskDetails?.isActive ? "Active" : "Inactive"}
                   </span>
@@ -221,7 +257,13 @@ export default function TaskDetails() {
 
           {/* Timeline Section */}
           {isAssigned && (
-            <div className="mb-8 p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
+            <motion.div
+              className="mb-8 p-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-2xl border border-slate-200"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
               <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
                 <CalendarDays className="w-6 h-6 mr-2 text-indigo-600" />
                 Project Timeline
@@ -275,12 +317,18 @@ export default function TaskDetails() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Progress Section - Display Only */}
           {isAssigned && (
-            <div className="mb-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
+            <motion.div
+              className="mb-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-slate-900 flex items-center">
                   <TrendingUp className="w-6 h-6 mr-2 text-indigo-600" />
@@ -313,11 +361,17 @@ export default function TaskDetails() {
                   <span>100%</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Task Description */}
-          <div className="mb-8">
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
             <h3 className="text-xl font-bold text-slate-900 mb-4">
               Task Description
             </h3>
@@ -326,10 +380,16 @@ export default function TaskDetails() {
                 {taskDetails?.description || "No description provided"}
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Task Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="group p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 hover:shadow-lg transition-all duration-300">
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
@@ -377,12 +437,18 @@ export default function TaskDetails() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Action Section */}
         {isAssigned && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-6 md:p-8">
+          <motion.div
+            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-6 md:p-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-3">
@@ -397,11 +463,10 @@ export default function TaskDetails() {
                 <button
                   onClick={handleTaskCompletion}
                   disabled={isTaskCompleted}
-                  className={`flex items-center justify-center px-8 py-4 rounded-2xl font-bold focus:outline-none focus:ring-4 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl text-lg ${
-                    isTaskCompleted
-                      ? "bg-gradient-to-r from-emerald-600 to-green-600 text-white opacity-75 cursor-not-allowed"
-                      : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 focus:ring-indigo-500"
-                  }`}
+                  className={`flex items-center justify-center px-8 py-4 rounded-2xl font-bold focus:outline-none focus:ring-4 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl text-lg ${isTaskCompleted
+                    ? "bg-gradient-to-r from-emerald-600 to-green-600 text-white opacity-75 cursor-not-allowed"
+                    : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 focus:ring-indigo-500"
+                    }`}
                 >
                   {isTaskCompleted ? (
                     <>
@@ -429,7 +494,7 @@ export default function TaskDetails() {
                 </div>
               </div>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -443,6 +508,7 @@ export default function TaskDetails() {
           taskId={taskId}
           projectId={projectId}
           projectEndDate={taskDetails?.projectEndDate}
+          teamId={taskDetails?.teamId}
         />
       )}
 
@@ -456,6 +522,6 @@ export default function TaskDetails() {
           userId={taskDetails?.userId}
         />
       )}
-    </div>
+    </motion.div>
   );
 }

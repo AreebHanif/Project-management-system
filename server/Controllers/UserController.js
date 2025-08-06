@@ -58,7 +58,7 @@ const loginUser = async (req, res) => {
                 return res.status(401).json({ message: "Invalid Email or Password" })
             }
         } else {
-            return res.status(404).json("User not found")
+            return res.status(404).json("User not found.Please Register first.")
         }
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server error. U-2' });

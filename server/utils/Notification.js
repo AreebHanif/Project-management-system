@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-dotenv.config(); // make sure this is at the top
+dotenv.config()
 
 // Transporter: TLS with port 587 — Most stable for Gmail
 const transporter = nodemailer.createTransport({
@@ -38,12 +38,12 @@ const userRegister = async (name, email, password) => {
     await sendEmail(mailOptions);
 };
 
-const userAssignedToModule = async (email, teamName) => {
+const userAssignedToModule = async (name, email) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: "📦 Module Assignment Notification",
-        text: `You have been assigned to module "${moduleName}".\nCheck your dashboard for details.\n\nRegards,\nTeam`,
+        text: `Congratulations ${name}, You have been assigned to a module.\nCheck your dashboard for details. or \n Click on this link to go to the dashboard http://localhost:5173/user/dashboard \n\nRegards,\nTeam`,
     };
     await sendEmail(mailOptions);
 };
@@ -68,9 +68,20 @@ const taskAssigned = async (email, name, taskName, moduleName, projectName) => {
     await sendEmail(mailOptions);
 };
 
+const contactMessageSender = async (name, email, phone, message) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: "📧 New Contact Message",
+        text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
+    };
+    await sendEmail(mailOptions);
+};
+
 export {
     userRegister,
     userAssignedToModule,
     userAddedToTeam,
-    taskAssigned
+    taskAssigned,
+    contactMessageSender
 };

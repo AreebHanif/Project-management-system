@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useParams, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { useGetModuleByIdQuery } from "../../redux/Api/moduleSlice";
 import {
@@ -229,14 +230,20 @@ const ModuleDetail = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
           <div className="flex items-center mb-6">
             <button
               onClick={handleGoBack}
               className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
             >
               <ArrowLeft className="w-5 h-5 mr-1" />
-              Back to Modules
+              Go Back
             </button>
           </div>
 
@@ -324,7 +331,7 @@ const ModuleDetail = () => {
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         <UserPlus className="w-4 h-4 mr-3 text-indigo-600" />
-                        Add Team Leader
+                        Assign Team
                       </button>
                     </div>
                   </div>
@@ -356,92 +363,93 @@ const ModuleDetail = () => {
           </div>
 
           {/* Search and Filter Section */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 mb-6">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search tasks by name, description, or assignee..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                />
-              </div>
-              <div className="flex gap-4">
-                <div className="sm:w-48 relative">
-                  <Filter className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
-                  <select
-                    value={filterActive}
-                    onChange={(e) => setFilterActive(e.target.value)}
-                    className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white appearance-none"
-                  >
-                    <option value="all">All Tasks</option>
-                    <option value="active">Active Tasks</option>
-                    <option value="inactive">Inactive Tasks</option>
-                  </select>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 mb-6">
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search tasks by name, description, or assignee..."
+                    value={searchTerm}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  />
                 </div>
-                <div className="sm:w-48 relative">
-                  <AlertCircle className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
-                  <select
-                    value={filterPriority}
-                    onChange={(e) => setFilterPriority(e.target.value)}
-                    className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white appearance-none"
-                  >
-                    <option value="all">All Priorities</option>
-                    <option value="high">High Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="low">Low Priority</option>
-                  </select>
+                <div className="flex gap-4">
+                  <div className="sm:w-48 relative">
+                    <Filter className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
+                    <select
+                      value={filterActive}
+                      onChange={(e) => setFilterActive(e.target.value)}
+                      className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white appearance-none"
+                    >
+                      <option value="all">All Tasks</option>
+                      <option value="active">Active Tasks</option>
+                      <option value="inactive">Inactive Tasks</option>
+                    </select>
+                  </div>
+                  <div className="sm:w-48 relative">
+                    <AlertCircle className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
+                    <select
+                      value={filterPriority}
+                      onChange={(e) => setFilterPriority(e.target.value)}
+                      className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white appearance-none"
+                    >
+                      <option value="all">All Priorities</option>
+                      <option value="high">High Priority</option>
+                      <option value="medium">Medium Priority</option>
+                      <option value="low">Low Priority</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Tasks List */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-50 to-cyan-50 px-6 py-4 border-b border-gray-200">
-            <div className="min-w-[1200px] grid grid-cols-12 gap-4 font-medium text-gray-700">
-              <div className="col-span-3 flex items-center">
-                <FileText className="w-4 h-4 mr-2" />
-                Task Name
-              </div>
-              <div className="col-span-3">Description</div>
-              <div className="col-span-2 text-center">Priority</div>
-              <div className="col-span-2 text-center">Status</div>
-              <div className="col-span-1 text-center">Completion</div>
-              <div className="col-span-1 text-center">Actions</div>
-            </div>
-          </div>
-
-          {/* Table Body */}
-          <div className="overflow-x-auto">
-            <div className="divide-y divide-gray-200 min-w-[1200px]">
-              {filteredTasks?.length === 0 ? (
-                <div className="px-6 py-12 text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <FileText className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No tasks found
-                  </h3>
-                  <p className="text-gray-500">
-                    {searchTerm ||
-                      filterActive !== "all" ||
-                      filterPriority !== "all"
-                      ? "Try adjusting your search or filter criteria"
-                      : "Get started by creating your first task"}
-                  </p>
+        {filteredTasks?.length > 0 ? (
+          <motion.div
+            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <div className="bg-gradient-to-r from-indigo-50 to-cyan-50 px-6 py-4 border-b border-gray-200">
+              <div className="min-w-[1200px] grid grid-cols-12 gap-4 font-medium text-gray-700">
+                <div className="col-span-3 flex items-center">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Task Name
                 </div>
-              ) : (
-                [...filteredTasks || []].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((task, index) => {
+                <div className="col-span-3">Description</div>
+                <div className="col-span-2 text-center">Priority</div>
+                <div className="col-span-2 text-center">Status</div>
+                <div className="col-span-1 text-center">Completion</div>
+                <div className="col-span-1 text-center">Actions</div>
+              </div>
+            </div>
+
+            {/* Table Body */}
+            <div className="overflow-x-auto">
+              <div className="divide-y divide-gray-200 min-w-[1200px]">
+                {[...filteredTasks || []].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((task, index) => {
                   const priorityConfig = getPriorityConfig(task.priority);
                   const PriorityIcon = priorityConfig.icon;
 
                   return (
-                    <div
+                    <motion.div
                       key={task._id}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 * index }}
                       className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all duration-200 ${task.active
                         ? "hover:scale-[1.02] shadow-sm hover:shadow-xl hover:border-indigo-200 cursor-pointer"
                         : "opacity-60 cursor-not-allowed shadow-sm"
@@ -537,17 +545,35 @@ const ModuleDetail = () => {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   );
-                })
-              )}
+                })}
+              </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            className="flex flex-col items-center justify-center min-h-[200px] bg-white rounded-2xl shadow-xl border border-gray-100 p-8 my-8 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <CheckCircle className="w-12 h-12 text-gray-300 mb-4 mx-auto" />
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">You don't have any tasks</h3>
+            <p className="text-gray-500 text-base max-w-xs mx-auto">Start by creating a new task for this module. All your tasks will appear here and you can manage them easily.</p>
+          </motion.div>
+        )}
 
         {/* Footer Stats */}
         {tasks?.tasksList?.length > 0 && (
-          <div className="mt-6 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+          <motion.div
+            className="mt-6 bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
@@ -592,7 +618,7 @@ const ModuleDetail = () => {
                 <div className="text-gray-600">Low Priority</div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 

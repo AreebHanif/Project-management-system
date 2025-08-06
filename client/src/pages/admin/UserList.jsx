@@ -28,7 +28,7 @@ export default function UserManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const { data: users, refetch, isLoading } = useGetAllUsersQuery();
+  const { data: users = [], refetch, isLoading } = useGetAllUsersQuery();
   let [deleteUser] = useDeleteUserMutation();
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function UserManagementPage() {
     return text.substring(0, maxLength) + "...";
   };
 
-  const filteredUsers = users?.filter((user) => {
+  const filteredUsers = users && users?.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,7 +81,7 @@ export default function UserManagementPage() {
           className=" cursor-pointer flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
         >
           <ArrowLeft className="w-5 h-5 mr-1" />
-          Back to DashBoard
+          Go Back
         </button>
       </div>
       <div className="max-w-7xl mx-auto">

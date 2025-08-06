@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 
 const createToken = (res, userId) => {
     const token = jwt.sign({ userId }, process.env.SECRET_KEY, {
-        expiresIn: '30d'
+        expiresIn: '30d',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     })
     res.cookie("PMS", token, {
         httpOnly: true,

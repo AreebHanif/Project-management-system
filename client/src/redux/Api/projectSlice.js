@@ -11,6 +11,7 @@ export const projectSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Projects"]
         }),
+
         updateProjectById: builder.mutation({
             query: ({ id, updatedProjectData }) => ({
                 url: `${PROJECT_URL}/${id}`,
@@ -19,6 +20,7 @@ export const projectSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Projects"]
         }),
+
         getProjectById: builder.query({
             query: (id) => ({
                 url: `${PROJECT_URL}/${id}`,
@@ -26,6 +28,7 @@ export const projectSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Projects"]
         }),
+
         deleteProjectById: builder.mutation({
             query: (id) => ({
                 url: `${PROJECT_URL}/${id}`,
@@ -33,6 +36,7 @@ export const projectSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Projects"]
         }),
+
         getAllProjects: builder.query({
             query: () => ({
                 url: `${PROJECT_URL}`,

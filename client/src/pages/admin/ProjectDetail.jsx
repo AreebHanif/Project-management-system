@@ -24,6 +24,7 @@ import {
   useGetModulesListQuery,
   useUpdateModuleByIdMutation,
 } from "../../redux/Api/moduleSlice";
+import { motion } from "framer-motion";
 
 const ProjectDetail = () => {
   const { projectId } = useParams(); // Assuming you're using react-router-dom for routing
@@ -190,14 +191,20 @@ const ProjectDetail = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
           <div className="flex items-center mb-6">
             <button
               onClick={handleGoBack}
               className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
             >
               <ArrowLeft className="w-5 h-5 mr-1" />
-              Back to Projects
+              Go Back
             </button>
           </div>
 
@@ -274,8 +281,15 @@ const ProjectDetail = () => {
               </button>
             </div>
           </div>
+        </motion.div>
 
-          {/* Search and Filter Section */}
+        {/* Search and Filter Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+        >
           <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 mb-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
@@ -302,37 +316,63 @@ const ProjectDetail = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Modules List  */}
         {/* Modules Section */}
         {filteredModules?.length > 0 ? (
-          <div className="grid ">
-            {[...filteredModules || []].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((module) => (
-              <Module
+          <motion.div
+            className="grid"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            {[...filteredModules || []].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((module, idx) => (
+              <motion.div
                 key={module._id}
-                module={module}
-                deleteModule={handleDelete}
-                setCurrentModule={setCurrentModule}
-                setIsEdit={setIsEdit}
-                setIsShowModal={setIsShowModal}
-                setErrors={setErrors}
-              />
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 * idx }}
+              >
+                <Module
+                  key={module._id}
+                  module={module}
+                  deleteModule={handleDelete}
+                  setCurrentModule={setCurrentModule}
+                  setIsEdit={setIsEdit}
+                  setIsShowModal={setIsShowModal}
+                  setErrors={setErrors}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <motion.div
+            className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="p-6 text-center text-gray-600">
               {searchTerm || filterActive !== "all"
                 ? "No modules found matching your search criteria. Try adjusting your search or filter."
                 : "No Module Found. Go create a module first"}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Footer Stats */}
         {modules?.modulesList?.length > 0 && (
-          <div className="mt-6 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+          <motion.div
+            className="mt-6 bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
@@ -353,7 +393,7 @@ const ProjectDetail = () => {
                 <div className="text-gray-600">Inactive Modules</div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 

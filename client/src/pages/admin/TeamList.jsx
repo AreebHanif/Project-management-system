@@ -11,12 +11,17 @@ import {
   User,
   Briefcase,
   Mail,
+  Crown,
+  ToggleLeft,
+  ToggleRight,
+  ArrowLeft,
 } from "lucide-react";
 import TeamModal from "../../components/Modal/TeamModal";
 import {
   useGetTeamListQuery,
   useDeleteTeamByIdMutation,
   useGetMembersByTeamIdQuery,
+  useUpdateTeamLeaderStatusByIdMutation,
   useRemoveMemberFromTeamByIdMutation,
 } from "../../redux/Api/teamSlice";
 import { toast } from "react-toastify";
@@ -56,9 +61,11 @@ export default function TeamList() {
   const [isShowMemberModals, setIsShowMemberModals] = useState(false);
   const [addTeamId, setAddTeamId] = useState(null);
   const [teamName, setTeamName] = useState(null);
+  const [isLeaderChanged, setIsLeaderChanged] = useState(false);
 
   const { data: teams, refetch } = useGetTeamListQuery();
   const [deleteTeamById] = useDeleteTeamByIdMutation();
+  const [updateTeamLeaderStatusById] = useUpdateTeamLeaderStatusByIdMutation();
   const [removeMemberFromTeamById] = useRemoveMemberFromTeamByIdMutation();
 
   const { data: teamMembers = [], isFetching: isFetchingMembers } =
@@ -118,14 +125,57 @@ export default function TeamList() {
     setCurrentTeam(null);
   }, []);
 
-  // Handler to add member to team
   const handleAddMemberToTeam = useCallback((teamId, teamName) => {
+    console.log("Opening add member modal for team:", teamId, teamName); // Debug log
     setTeamName(teamName);
     setAddTeamId(teamId);
     setIsShowMemberModals(true);
   }, []);
 
-  // Handler to delete member
+  const handleCloseMemberModal = useCallback(() => {
+    console.log("Closing member modal"); // Debug log
+    setIsShowMemberModals(false);
+    setAddTeamId(null);
+    setTeamName(null);
+  }, []);
+
+  const handleLeaderChange = useCallback(
+    async (teamId, userId, currentLeaderStatus, memberName) => {
+      const action = currentLeaderStatus ? "remove leader status from" : "make";
+      const confirmMessage = currentLeaderStatus
+        ? `Are you sure you want to remove leader status from "${memberName}"?`
+        : `Are you sure you want to make "${memberName}" the team leader?`;
+
+      if (!window.confirm(confirmMessage)) {
+        return;
+      }
+
+      try {
+        const res = await updateTeamLeaderStatusById({
+          teamId,
+          userId,
+          isLeader: !currentLeaderStatus
+        });
+
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to update leader status");
+        } else {
+          toast.success(
+            currentLeaderStatus
+              ? `Leader status removed from ${memberName}`
+              : `${memberName} is now the team leader`
+          );
+          refetch();
+          setIsLeaderChanged(true);
+        }
+      } catch (error) {
+        toast.error("Failed to update leader status");
+        console.error("Error updating leader status:", error);
+      }
+    },
+    [updateTeamLeaderStatusById, refetch]
+  );
+
   const handleDeleteMember = useCallback(
     async (teamId, userId, memberName) => {
       if (
@@ -153,9 +203,22 @@ export default function TeamList() {
     [removeMemberFromTeamById, refetch]
   );
 
+  const handleGoBack = () => {
+    window.history.back()
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-6">
       <div className="max-w-7xl mx-auto">
+        <div className="flex items-center mb-6">
+          <button
+            onClick={handleGoBack}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4"
+          >
+            <ArrowLeft className="w-5 h-5 mr-1" />
+            Go Back
+          </button>
+        </div>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -214,7 +277,7 @@ export default function TeamList() {
                     <div
                       key={team._id}
                       className={`border-b border-gray-200 last:border-b-0 ${team.active
-                        ? "hover:scale-[1.02] shadow-sm hover:shadow-xl hover:border-indigo-200 cursor-pointer"
+                        ? "hover:border-indigo-200 cursor-pointer"
                         : "opacity-60 cursor-not-allowed shadow-sm"
                         }`}
                     >
@@ -296,12 +359,14 @@ export default function TeamList() {
                           {/* Add Members Button */}
                           <div className="col-span-2 flex items-center justify-center">
                             <button
-                              onClick={() =>
-                                handleAddMemberToTeam(team._id, team.teamName)
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent event bubbling
+                                handleAddMemberToTeam(team._id, team.teamName);
+                              }}
                               className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
                               aria-label={`Add member to ${team.teamName}`}
                               title="Add member to team"
+                              disabled={isShowMemberModals} // Prevent multiple clicks
                             >
                               <Plus className="w-5 h-5" />
                             </button>
@@ -335,27 +400,49 @@ export default function TeamList() {
                               </div>
                             ) : (
                               <div className="space-y-2">
-                                {teamMembers?.map((member, index) => {
+                                {[...teamMembers || []].sort((a, b) => a.isLeader === b.isLeader ? 0 : a.isLeader ? -1 : 1)?.map((member, index) => {
+                                  const isLeader = member.isLeader;
                                   return (
                                     <div
                                       key={member.id || index}
-                                      className="bg-white rounded-lg p-3 border border-gray-200 hover:border-indigo-200 transition-colors"
+                                      className={`bg-white rounded-lg p-3 border transition-colors ${isLeader
+                                        ? "border-yellow-300 bg-gradient-to-r from-yellow-50 to-amber-50 scale-[1.02] hover:border-yellow-400"
+                                        : "border-gray-200 hover:border-indigo-200"
+                                        }`}
                                     >
                                       <div className="grid grid-cols-12 gap-4 items-center">
-                                        {/* Name */}
+                                        {/* Name with Leader Badge */}
                                         <div className="col-span-4 flex items-center">
-                                          <div className="w-8 h-8 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
-                                            <span className="text-indigo-600 font-medium text-xs">
-                                              {member.name
-                                                ?.split(" ")
-                                                .map((n) => n[0])
-                                                .join("")
-                                                .toUpperCase() || "U"}
-                                            </span>
+                                          <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${isLeader
+                                            ? "bg-gradient-to-r from-yellow-200 to-amber-200 ring-2 ring-yellow-300"
+                                            : "bg-gradient-to-r from-indigo-100 to-cyan-100"
+                                            }`}>
+                                            {isLeader ? (
+                                              <Crown className="w-4 h-4 text-yellow-600" />
+                                            ) : (
+                                              <span className="text-indigo-600 font-medium text-xs">
+                                                {member.name
+                                                  ?.split(" ")
+                                                  .map((n) => n[0])
+                                                  .join("")
+                                                  .toUpperCase() || "U"}
+                                              </span>
+                                            )}
                                           </div>
-                                          <p className="text-sm font-medium text-gray-900">
-                                            {member.name || "Unknown"}
-                                          </p>
+                                          <div className="flex flex-col">
+                                            <div className="flex items-center">
+                                              <p className={`text-sm font-medium ${isLeader ? "text-yellow-800" : "text-gray-900"
+                                                }`}>
+                                                {member.name || "Unknown"}
+                                              </p>
+                                              {isLeader && (
+                                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                  <Crown className="w-3 h-3 mr-1" />
+                                                  Leader
+                                                </span>
+                                              )}
+                                            </div>
+                                          </div>
                                         </div>
                                         {/* Email */}
                                         <div className="col-span-4 flex items-center">
@@ -415,6 +502,25 @@ export default function TeamList() {
                                           >
                                             <Trash2 className="w-3 h-3" />
                                           </button>
+                                          <button
+                                            onClick={() =>
+                                              handleLeaderChange(
+                                                team._id,
+                                                member.userId,
+                                                member.isLeader,
+                                                member.name
+                                              )
+                                            }
+                                            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+                                            aria-label={`${member.isLeader ? 'Remove leader status from' : 'Make'} ${member.name} ${member.isLeader ? '' : 'team leader'}`}
+                                            title={member.isLeader ? "Remove leader status" : "Make team leader"}
+                                          >
+                                            {member.isLeader ? (
+                                              <ToggleRight className="w-8 h-8 text-indigo-600 hover:text-indigo-700 transition-colors" />
+                                            ) : (
+                                              <ToggleLeft className="w-8 h-8 text-gray-400 hover:text-gray-500 transition-colors" />
+                                            )}
+                                          </button>
                                         </div>
                                       </div>
                                     </div>
@@ -444,7 +550,7 @@ export default function TeamList() {
         )}
         {isShowMemberModals && (
           <AddMemberModal
-            setModal={setIsShowMemberModals}
+            setModal={handleCloseMemberModal}
             teamId={addTeamId}
             refetch={refetch}
             teamname={teamName}

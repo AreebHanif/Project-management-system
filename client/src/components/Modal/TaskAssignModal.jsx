@@ -15,6 +15,7 @@ const TaskAssignModal = ({
   taskId,
   setRes,
   projectEndDate,
+  teamId
 }) => {
   const [selectedTeamId, setSelectedTeamId] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState("");
@@ -36,6 +37,9 @@ const TaskAssignModal = ({
     useGetMembersByTeamIdQuery(selectedTeamId, { skip: !selectedTeamId });
 
   const [taskAssignedToUser] = useTaskAssignedToUserMutation();
+
+  let filterTeam = teams?.filter((team) => team._id === teamId)
+
 
   // Helper function to format date for Express server (ISO string)
   const formatDateForServer = (dateString) => {
@@ -213,7 +217,7 @@ const TaskAssignModal = ({
               required
             >
               <option value="">Choose a team...</option>
-              {teams?.map((team) => (
+              {filterTeam?.map((team) => (
                 <option key={team._id} value={team._id}>
                   {team.teamName}
                 </option>
@@ -289,8 +293,8 @@ const TaskAssignModal = ({
             <p className="text-xs text-slate-500 mt-1">
               {projectEndDate
                 ? `Select date between today and ${new Date(
-                    projectEndDate
-                  ).toLocaleDateString()}`
+                  projectEndDate
+                ).toLocaleDateString()}`
                 : "Select the expected completion date for this task"}
             </p>
           </div>

@@ -3,6 +3,7 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 import cors from "cors"
+import rateLimit from "express-rate-limit"
 
 // Files
 import connectDB from "./config/db.js"
@@ -17,12 +18,22 @@ const app = express()
 const port = process.env.PORT || 5000
 dotenv.config()
 
+// Rate Limiter Middleware
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+})
+app.use(limiter)
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
     origin: "http://localhost:5173",
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
 }))
 
 // Routes

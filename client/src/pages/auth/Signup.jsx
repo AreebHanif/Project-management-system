@@ -230,10 +230,10 @@ export default function SignupPage() {
                     </span>
                     <span
                       className={`text-sm font-medium ${passwordStrength() <= 2
-                          ? "text-red-500"
-                          : passwordStrength() <= 3
-                            ? "text-yellow-500"
-                            : "text-green-500"
+                        ? "text-red-500"
+                        : passwordStrength() <= 3
+                          ? "text-yellow-500"
+                          : "text-green-500"
                         }`}
                     >
                       {getStrengthText()}
@@ -319,16 +319,6 @@ export default function SignupPage() {
                 </div>
               )}
             </button>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{" "}
-              <button className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors hover:underline">
-                Sign in here
-              </button>
-            </p>
           </div>
         </div>
 

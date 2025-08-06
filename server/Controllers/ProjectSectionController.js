@@ -1,6 +1,8 @@
 import ProjectSection from "../models/ProjectSection.js";
 import TeamAssignedToModule from "../models/TeamAssignedToModule.js";
 import Project from '../models/Project.js'
+import TeamDetail from '../models/TeamDetail.js'
+import { userAssignedToModule } from "../utils/Notification.js";
 
 const createModule = async (req, res) => {
     try {
@@ -134,52 +136,63 @@ const getModuleById = async (req, res) => {
             teamLeader: module.teamLeader,
         });
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error. M-04" });
+        return res.status(500).json({ message: "Internal server error. M-05" });
     }
 };
 
 const teamAssignedToModule = async (req, res) => {
     try {
         const { teamId, moduleId } = req.body;
+
         if (!teamId || !moduleId) {
-            return res.status(400).json({ message: "Team id and module id are required" })
+            return res.status(400).json({ message: "Team id and module id are required" });
         }
 
-        let isAlreadyAssigned = TeamAssignedToModule.findById({ teamId })
-        if (isAlreadyAssigned) {
-            return res.status(400).json({ message: "Team Already Assigned to this module." })
+        // Check if module exists
+        const section = await ProjectSection.findById(moduleId);
+        if (!section) {
+            return res.status(404).json({ message: "Module not found" });
         }
-        const teamAssigned = new TeamAssignedToModule({
-            teamId, moduleId
-        })
-        if (!teamAssigned) {
-            return res.status(400).json({ message: "Error assigning module to team" })
-        }
-        await teamAssigned.save()
 
-        return res.status(200).json({ message: "Team successfully assigned to module", teamAssigned })
+        // Check if team is already assigned to this module
+        const existingAssignment = await TeamAssignedToModule.findOne({ teamId, moduleId });
+        if (existingAssignment) {
+            return res.status(400).json({ message: "This team is already assigned to this module." });
+        }
+
+        // Check if any team is already assigned to this module
+        const moduleHasTeam = await TeamAssignedToModule.findOne({ moduleId });
+        if (moduleHasTeam) {
+            return res.status(400).json({ message: "A team is already assigned to this module." });
+        }
+
+        // Get the team leader
+        const leader = await TeamDetail.findOne({ teamId, isLeader: true }).populate("userId", "email name")
+        console.log("leader", leader)
+        if (!leader) {
+            return res.status(404).json({ message: "Team leader not found for the selected team." });
+        }
+
+        // Create team assignment first
+        const teamAssignedToModule = await TeamAssignedToModule.create({ teamId, moduleId });
+        if (!teamAssignedToModule) {
+            return res.status(400).json({ message: "Team assignment failed!" });
+        }
+
+        // Update the module with the team leader
+        section.teamLeader = leader.userId;
+        await section.save();
+        userAssignedToModule(leader.userId.name, leader.userId.email)
+        return res.status(200).json({
+            message: "Team leader successfully assigned to module",
+            section
+        });
+
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error. M-04" });
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error. M-06" });
     }
 };
-
-const teamLeaderAssignedToModule = async (req, res) => {
-    try {
-        const { teamLeaderId, moduleId } = req.body
-        if (!teamLeaderId || !moduleId) {
-            return res.status(400).json({ message: "Team leader id and module id are required" });
-        }
-
-        const updatedModule = await ProjectSection.findByIdAndUpdate(moduleId, { teamLeader: teamLeaderId }, { new: true }).populate("teamLeader", "name -_id");
-
-        if (!updatedModule) {
-            return res.status(404).json({ message: "Module not found or could not be updated" })
-        }
-        return res.status(200).json({ message: "Team Leader Successfully assigned to module", updatedModule })
-    } catch (error) {
-        return res.status(500).json({ message: "Internal server error. M-04" })
-    }
-}
 
 export {
     createModule,
@@ -188,5 +201,4 @@ export {
     updateModuleById,
     getModuleById,
     teamAssignedToModule,
-    teamLeaderAssignedToModule,
 }

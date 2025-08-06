@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.8",
+    "framer-motion": "^12.23.3",
     "lucide-react": "^0.511.0",
     "moment": "^2.30.1",
     "react": "^19.0.0",

@@ -10,17 +10,33 @@ const createTeam = async (req, res) => {
         const team = await Team.create({ teamName });
         res.status(201).json(team);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("T-01", err);
+        res.status(500).json({
+            message: "Error adding member to team t-01",
+            error: err.message,
+        });
     }
 };
 
 // Get all teams
 const getAllTeams = async (req, res) => {
     try {
-        const teams = await Team.find({});
-        res.status(200).json(teams);
+        const teams = await Team.find({ active: true })
+        if (teams === 0) {
+            return res.status(400).json({ message: "No team found." })
+        }
+
+        let teamLeaderId = await TeamDetail.findOne({ isLeader: true }).select("userId -_id")
+
+        console.log("teamLeaderId", teamLeaderId)
+        return res.status(200).json(teams);
+
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("T-02", err);
+        res.status(500).json({
+            message: "Error adding member to team t-02",
+            error: err.message,
+        });
     }
 };
 
@@ -31,7 +47,11 @@ const getTeamById = async (req, res) => {
         if (!team) return res.status(404).json({ message: "Team not found" });
         res.status(200).json(team);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("T-03", err);
+        res.status(500).json({
+            message: "Error adding member to team t-3",
+            error: err.message,
+        });
     }
 };
 
@@ -42,7 +62,11 @@ const updateTeamById = async (req, res) => {
         if (!team) return res.status(404).json({ message: "Team not found" });
         res.status(200).json(team);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("T-04", err);
+        res.status(500).json({
+            message: "Error adding member to team t-04",
+            error: err.message,
+        });
     }
 };
 
@@ -53,35 +77,51 @@ const deleteTeamById = async (req, res) => {
         await TeamDetail.deleteMany({ teamId: req.params.id }); // Remove all members from that team
         res.status(200).json({ message: "Team and its members deleted" });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("T-05", err);
+        res.status(500).json({
+            message: "Error adding member to team t-05",
+            error: err.message,
+        });
     }
 };
 
 // Add member to a team
 const addMemberToTeam = async (req, res) => {
-    const { teamId, userId } = req.body;
+    const { teamId, userId, isLeader } = req.body;
 
     try {
-        // 1. Check if user is already in the team
-        const alreadyExists = await TeamDetail.findOne({ teamId, userId });
+        const user = await User.findById(userId).select("name email active");
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        console.log("user", user)
+        if (!user.active) {
+            return res.status(400).json({ message: "User is not active." });
+        }
+
+        const alreadyExists = await TeamDetail.findOne({ teamId, userId }).populate([
+            { path: "teamId", select: "teamName" },
+            { path: "userId", select: "name email" }
+        ]);
+
         if (alreadyExists) {
             return res.status(400).json({ message: "User already in the team" });
         }
 
-        // 2. Add user to the team
-        const detail = await TeamDetail.create({ teamId, userId });
+        if (isLeader) {
+            const isLeaderExist = await TeamDetail.findOne({ teamId, isLeader: true });
+            if (isLeaderExist) {
+                return res.status(400).json({ message: "Team Leader already exists." });
+            }
+        }
+        const detail = await TeamDetail.create({ teamId, userId, isLeader });
         res.status(201).json(detail);
 
-        // 3. Fetch user details
-        const user = await User.findById(userId).select("name email");
         const team = await Team.findById(teamId).select("teamName");
-
-        if (!user || !team) {
-            console.warn("❗ Cannot send email: user or team not found");
+        if (!team) {
+            console.warn("❗ Cannot send email: team not found");
             return;
         }
-
-        // 4. Send email notification
         await userAddedToTeam(user.name, user.email, team.teamName);
 
     } catch (err) {
@@ -97,8 +137,8 @@ const addMemberToTeam = async (req, res) => {
 const getTeamMembers = async (req, res) => {
     try {
         const members = await TeamDetail.find({ teamId: req.params.teamId })
-            .populate("userId", "name email designation active") // select specific fields from User
-            .populate("teamId", "teamName"); // populate team name from Team collection
+            .populate("userId", "name email designation active")
+            .populate("teamId", "teamName");
         const filteredMembers = members.map((member) => ({
             teamId: member.teamId?._id,
             userId: member.userId?._id,
@@ -106,13 +146,74 @@ const getTeamMembers = async (req, res) => {
             email: member.userId?.email,
             designation: member.userId?.designation,
             active: member.userId?.active,
-            teamName: member.teamId?.teamName
+            teamName: member.teamId?.teamName,
+            isLeader: member.isLeader
         }));
         return res.status(200).json(filteredMembers);
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error("T-07", err);
+        res.status(500).json({
+            message: "Error adding member to team t-07",
+            error: err.message,
+        });
     }
 };
+
+const updateTeamLeaderStatusById = async (req, res) => {
+    try {
+        let { isLeader, teamId, userId } = req.body;
+
+        // Validate required fields
+        if (isLeader === undefined || isLeader === null) {
+            return res.status(400).json({ message: "isLeader value is required" });
+        }
+        if (!teamId) {
+            return res.status(400).json({ message: "teamId is required" });
+        }
+        if (!userId) {
+            return res.status(400).json({ message: "userId is required" });
+        }
+
+        // Check if the team member exists
+        let teamMember = await TeamDetail.findOne({ teamId, userId });
+        if (!teamMember) {
+            return res.status(404).json({ message: "Team member not found" });
+        }
+
+        // If setting someone as leader, first remove leader status from all other members in the same team
+        if (isLeader) {
+            await TeamDetail.updateMany(
+                { teamId: teamId, userId: { $ne: userId } },
+                { $set: { isLeader: false } }
+            );
+        }
+
+        // Update the specific member's leader status
+        let isUpdated = await TeamDetail.findOneAndUpdate(
+            { teamId: teamId, userId: userId },
+            { $set: { isLeader: isLeader } },
+            { new: true }
+        );
+
+        if (!isUpdated) {
+            return res.status(400).json({
+                message: "Something went wrong, try again after sometime"
+            });
+        }
+
+        return res.status(200).json({
+            message: `Team member ${isLeader ? 'promoted to leader' : 'leader status removed'} successfully.`,
+            data: isUpdated
+        });
+
+    } catch (error) {
+        console.error("T-08", error);
+        res.status(500).json({
+            message: "Error updating team member leader status T-08",
+            error: error.message,
+        });
+    }
+}
 
 // Remove a member from a team
 const removeMemberById = async (req, res) => {
@@ -124,9 +225,14 @@ const removeMemberById = async (req, res) => {
         }
         res.status(200).json({ message: "Member removed from team", deletedDetail });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("T-09", err);
+        res.status(500).json({
+            message: "Error adding member to team t-09",
+            error: err.message,
+        });
     }
 };
+
 
 export {
     createTeam,
@@ -136,5 +242,6 @@ export {
     deleteTeamById,
     addMemberToTeam,
     getTeamMembers,
-    removeMemberById
+    updateTeamLeaderStatusById,
+    removeMemberById,
 }
