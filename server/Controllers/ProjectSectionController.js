@@ -168,7 +168,6 @@ const teamAssignedToModule = async (req, res) => {
 
         // Get the team leader
         const leader = await TeamDetail.findOne({ teamId, isLeader: true }).populate("userId", "email name")
-        console.log("leader", leader)
         if (!leader) {
             return res.status(404).json({ message: "Team leader not found for the selected team." });
         }

@@ -28,7 +28,6 @@ const getAllTeams = async (req, res) => {
 
         let teamLeaderId = await TeamDetail.findOne({ isLeader: true }).select("userId -_id")
 
-        console.log("teamLeaderId", teamLeaderId)
         return res.status(200).json(teams);
 
     } catch (err) {
@@ -94,7 +93,6 @@ const addMemberToTeam = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
-        console.log("user", user)
         if (!user.active) {
             return res.status(400).json({ message: "User is not active." });
         }

@@ -60,7 +60,7 @@ const AddTeamLeaderModal = ({
       }).unwrap();
 
       if (teamRes?.error) {
-        toast.error(teamRes?.error?.data?.message);
+        toast.error(teamRes?.error?.message);
         return;
       }
 
@@ -69,7 +69,7 @@ const AddTeamLeaderModal = ({
     } catch (error) {
       console.error("Error assigning team:", error);
       toast.error(
-        error?.data?.message || error?.message || "Failed to assign team"
+        error?.message || error?.message || "Failed to assign team"
       );
     } finally {
       setIsSubmitting(false);

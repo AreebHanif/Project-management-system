@@ -99,9 +99,8 @@ export default function UpdateUserModal({
         id: user._id,
         data: formData,
       }).unwrap();
-      console.log(res);
       toast.success(
-        res?.data?.message || res?.message || "Updated Successfully"
+        res?.message || res?.message || "Updated Successfully"
       );
       if (setCredentials !== undefined) {
         dispatch(setCredentials({ ...res.updatedUser }));
@@ -113,7 +112,7 @@ export default function UpdateUserModal({
     } catch (error) {
       console.error("Error updating user:", error);
       toast.error(
-        error?.data?.message || error?.message || "Failed to update user"
+        error?.message || error?.message || "Failed to update user"
       );
     } finally {
       setIsSubmitting(false);
@@ -179,9 +178,8 @@ export default function UpdateUserModal({
                   name="name"
                   value={formData?.name}
                   onChange={handleUpdate}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.name ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.name ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Enter full name"
                 />
                 <User className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -206,9 +204,8 @@ export default function UpdateUserModal({
                   name="email"
                   value={formData?.email}
                   onChange={handleUpdate}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="user@company.com"
                 />
                 <Mail className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -226,9 +223,8 @@ export default function UpdateUserModal({
               <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
                 <div className="flex items-center">
                   <div
-                    className={`w-3 h-3 rounded-full mr-3 ${
-                      formData.active ? "bg-green-500" : "bg-gray-400"
-                    }`}
+                    className={`w-3 h-3 rounded-full mr-3 ${formData.active ? "bg-green-500" : "bg-gray-400"
+                      }`}
                   ></div>
                   <span className="text-sm font-medium text-gray-700">
                     {formData.active ? "Active" : "Inactive"}
@@ -262,9 +258,8 @@ export default function UpdateUserModal({
                   name="designation"
                   value={formData.designation}
                   onChange={handleUpdate}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${
-                    errors.designation ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${errors.designation ? "border-red-500" : "border-gray-300"
+                    }`}
                 >
                   <option value="">Select designation</option>
                   {designations.map((designation) => (

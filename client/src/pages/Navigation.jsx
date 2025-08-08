@@ -63,7 +63,7 @@ const Navigation = () => {
     } catch (error) {
       console.log("Error Logging Out", error);
       toast.error(
-        error?.message || error?.data?.message || "Error logging out"
+        error?.message || error?.message || "Error logging out"
       );
     }
   };

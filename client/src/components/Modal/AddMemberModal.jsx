@@ -36,7 +36,7 @@ const AddMemberModal = ({ setModal, teamId, refetch, teamname }) => {
     } catch (error) {
       console.error("Failed to add team member:", error);
       toast.error(
-        error?.data?.message || "Failed to add team member. Please try again."
+        error?.message || "Failed to add team member. Please try again."
       );
     }
   };

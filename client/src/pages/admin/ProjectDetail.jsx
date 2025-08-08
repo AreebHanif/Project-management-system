@@ -54,14 +54,14 @@ const ProjectDetail = () => {
       let res = await createModuleMutation({ projectId, formData });
       if (res?.error) {
         toast.error(
-          res?.error?.data?.message ||
           res?.error?.message ||
+          res?.message ||
           "Module Creation failed"
         );
         return;
       } else {
         toast.success(
-          res?.data?.message || res?.message || "Module Created Successfully"
+          res?.message || res?.message || "Module Created Successfully"
         );
       }
       setFormData({
@@ -74,7 +74,7 @@ const ProjectDetail = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error(
-        error?.data?.message || error?.message || "Module Creation Failed"
+        error?.message || error?.message || "Module Creation Failed"
       );
     } finally {
       setIsSubmitting(false);
@@ -86,7 +86,7 @@ const ProjectDetail = () => {
       let id = currentModule._id;
       let res = await updateModuleById({ id, formData });
       toast.success(
-        res?.data?.message || res?.message || "Module Updated Successfully"
+        res?.message || res?.message || "Module Updated Successfully"
       );
       setFormData({
         moduleName: "",
@@ -95,7 +95,7 @@ const ProjectDetail = () => {
       });
       refetch();
     } catch (error) {
-      toast.error(error?.data?.message || error?.message || "Updation Failed");
+      toast.error(error?.message || error?.message || "Updation Failed");
     } finally {
       setCurrentModule(null);
       setIsEdit(false);
@@ -108,11 +108,11 @@ const ProjectDetail = () => {
     try {
       let res = await delteModuleById(module._id);
       toast.success(
-        res?.data?.message || res?.message || "Module Deleted Sucessfully"
+        res?.message || res?.message || "Module Deleted Sucessfully"
       );
     } catch (error) {
       toast.error(
-        error?.data?.message || error?.message || "Error deleting Module."
+        error?.message || error?.message || "Error deleting Module."
       );
     }
   };

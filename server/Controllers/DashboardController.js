@@ -40,12 +40,10 @@ let userDashboard = async (req, res) => {
         const userTeams = await TeamMember.find({ userId }).select('teamId');
         const teamIds = userTeams.map(tm => tm.teamId);
 
-        // 2. Find all modules assigned to these teams
-        const teamModules = await TeamAssignedToModule.find({ teamId: { $in: teamIds } }).select('moduleId');
-        const moduleIds = teamModules.map(tm => tm.moduleId);
 
-        // 3. For each module, get its project and module details with names
-        const modules = await Module.find({ _id: { $in: moduleIds } }).select('_id projectId moduleName');
+        // 2. Find all modules where the user is the leader
+        // Adjust 'teamLeaderId' if your schema uses a different field name
+        const modules = await Module.find({ teamLeader: userId }).select('_id projectId moduleName');
         const moduleProjectMap = {};
         const projectIds = [];
         modules.forEach(mod => {
@@ -63,7 +61,8 @@ let userDashboard = async (req, res) => {
         // 5. Find all tasks assigned to the user
         const taskAssignments = await TaskAssignment.find({ userAssignedTo: userId }).select('taskId');
         const taskIds = taskAssignments.map(ta => ta.taskId);
-        const completedTasksCounts = await Task.find({ isCompleted: true }).select('_id moduleId').countDocuments()
+        // Count only completed tasks that are assigned to the user
+        const completedTasksCounts = await Task.find({ _id: { $in: taskIds }, isCompleted: true }).countDocuments();
 
         // 6. For each task, get its module and project with names
         const tasks = await Task.find({ _id: { $in: taskIds } }).select('_id moduleId name');
@@ -110,16 +109,16 @@ let userDashboard = async (req, res) => {
     }
 }
 
-let contactMessage = async (req,res) => {
-    let {name, email, phone, message } = req.body;
+let contactMessage = async (req, res) => {
+    let { name, email, phone, message } = req.body;
     try {
-        if(!name || !email || !phone || !message){
-            return res.status(400).json({message: "All fields are required"})
+        if (!name || !email || !phone || !message) {
+            return res.status(400).json({ message: "All fields are required" })
         }
         contactMessageSender(name, email, phone, message)
-        return res.status(200).json({message: "Message sent successfully"})
+        return res.status(200).json({ message: "Message sent successfully" })
     } catch (error) {
-        
+
     }
 }
 

@@ -5,7 +5,7 @@ import { isAuthenticated, isAdmin } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 // Routes for Admin
-router.route('/register').post(isAuthenticated, isAdmin, createUser)
+router.route('/register').post(createUser)
 router.route('/:id').delete(isAuthenticated, isAdmin, deleteUserById)
 
 // Simple Routes

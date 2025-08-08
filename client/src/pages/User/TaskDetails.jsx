@@ -245,13 +245,13 @@ export default function TaskDetails() {
               </button>
 
               {/* Assign Team Member Button */}
-              <button
+              {!isAssigned && <button
                 onClick={handleAssignTeamMember}
                 className="group flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
                 title="Assign Team Member"
               >
                 <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-200" />
-              </button>
+              </button>}
             </div>
           </div>
 

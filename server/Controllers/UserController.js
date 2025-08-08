@@ -35,7 +35,6 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
-
     if (!email || !password) {
         return res.status(400).json({ message: "Please Fill all the inputs field" })
     }
@@ -50,7 +49,6 @@ const loginUser = async (req, res) => {
                     name: userExist.name,
                     email: userExist.email,
                     designation: userExist.designation,
-                    image: userExist.image,
                     isAdmin: userExist.isAdmin,
                     active: userExist.active,
                 })

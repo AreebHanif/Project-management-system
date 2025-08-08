@@ -100,7 +100,7 @@ export default function TeamList() {
 
       try {
         const res = await deleteTeamById(id);
-        toast.success(res?.data?.message || "Team deleted successfully");
+        toast.success(res?.message || "Team deleted successfully");
         // Close expanded team if it was the one being deleted
         if (expandedTeamId === id) {
           setExpandedTeamId(null);
@@ -126,14 +126,12 @@ export default function TeamList() {
   }, []);
 
   const handleAddMemberToTeam = useCallback((teamId, teamName) => {
-    console.log("Opening add member modal for team:", teamId, teamName); // Debug log
     setTeamName(teamName);
     setAddTeamId(teamId);
     setIsShowMemberModals(true);
   }, []);
 
   const handleCloseMemberModal = useCallback(() => {
-    console.log("Closing member modal"); // Debug log
     setIsShowMemberModals(false);
     setAddTeamId(null);
     setTeamName(null);
@@ -158,7 +156,7 @@ export default function TeamList() {
         });
 
         if (res?.error) {
-          toast.error(res?.error?.data?.message || "Failed to update leader status");
+          toast.error(res?.error?.message || "Failed to update leader status");
         } else {
           toast.success(
             currentLeaderStatus
@@ -170,7 +168,6 @@ export default function TeamList() {
         }
       } catch (error) {
         toast.error("Failed to update leader status");
-        console.error("Error updating leader status:", error);
       }
     },
     [updateTeamLeaderStatusById, refetch]
@@ -189,7 +186,7 @@ export default function TeamList() {
       try {
         let res = await removeMemberFromTeamById({ teamId, userId });
         if (res?.error) {
-          toast.error(res?.error?.data?.message || "Failed to delete member");
+          toast.error(res?.error?.message || "Failed to delete member");
         } else {
           toast.success("Member removed successfully");
           // Refetch the teams to update the member list
@@ -197,7 +194,6 @@ export default function TeamList() {
         }
       } catch (error) {
         toast.error("Failed to delete member");
-        console.error("Error removing member:", error);
       }
     },
     [removeMemberFromTeamById, refetch]

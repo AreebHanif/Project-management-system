@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Plus,
   User,
@@ -18,7 +18,6 @@ import { toast } from "react-toastify";
 import {
   useDeleteUserMutation,
   useGetAllUsersQuery,
-  useLogoutMutation,
 } from "../../redux/Api/userApiSlice";
 import UpdateUserModal from "../../components/Modal/UpdateUserModal";
 
@@ -28,12 +27,8 @@ export default function UserManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const { data: users = [], refetch, isLoading } = useGetAllUsersQuery();
+  const { data: users = [], refetch, isLoading, error } = useGetAllUsersQuery();
   let [deleteUser] = useDeleteUserMutation();
-
-  useEffect(() => {
-    refetch();
-  }, [users, currentUser]);
 
   const handleEditUser = (user) => {
     setCurrentUser(user);
@@ -46,20 +41,26 @@ export default function UserManagementPage() {
       toast.success(res.message || "User deleted successfully");
       refetch();
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to delete user");
+      toast.error(error?.message || "Failed to delete user");
     }
   };
 
   const truncateText = (text, maxLength = 20) => {
+    if (!text || typeof text !== 'string') return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
-  const filteredUsers = users && users?.filter((user) => {
+  // Ensure users is always an array before filtering
+  const safeUsers = Array.isArray(users) ? users : [];
+
+  const filteredUsers = safeUsers.filter((user) => {
+    if (!user) return false;
+
     const matchesSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.designation.toLowerCase().includes(searchTerm.toLowerCase());
+      (user.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.designation || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter =
       filterActive === "all" ||
@@ -71,6 +72,32 @@ export default function UserManagementPage() {
 
   const handleGoBack = () => {
     window.history.back();
+  };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-500">Loading users...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-red-500">Error loading users: {error.message}</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -159,7 +186,7 @@ export default function UserManagementPage() {
           {/* Table Body */}
           <div className="overflow-x-auto">
             <div className="divide-y divide-gray-200 min-w-[800px]">
-              {filteredUsers?.length === 0 ? (
+              {filteredUsers.length === 0 ? (
                 <div className="px-6 py-12 text-center">
                   <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <User className="w-8 h-8 text-gray-400" />
@@ -174,11 +201,12 @@ export default function UserManagementPage() {
                   </p>
                 </div>
               ) : (
-                [...filteredUsers || []]
-                  ?.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))?.map((user, index) => (
+                filteredUsers
+                  .sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))
+                  .map((user, index) => (
                     <div
-                      key={user?._id}
-                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all ${user.active
+                      key={user?._id || index}
+                      className={`px-6 py-4 hover:bg-gradient-to-r hover:from-indigo-25 hover:to-cyan-25 transition-all ${user?.active
                         ? "hover:scale-[1.02] hover:shadow-xl hover:border-indigo-200 cursor-pointer"
                         : "opacity-60 cursor-not-allowed shadow-sm"
                         } duration-200 ${index % 2 === 0 ? "bg-gray-25" : "bg-white"
@@ -189,25 +217,27 @@ export default function UserManagementPage() {
                           <div className="w-10 h-10 bg-gradient-to-r from-indigo-100 to-cyan-100 rounded-full flex items-center justify-center mr-3">
                             <span className="text-indigo-600 font-medium text-sm">
                               {user?.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                                ? user.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                                : "??"}
                             </span>
                           </div>
                           <p className="font-medium text-gray-900">
-                            {user?.name}
+                            {user?.name || 'Unknown'}
                           </p>
                         </div>
                         <div
                           className="col-span-3 text-gray-600"
-                          title={user?.email}
+                          title={user?.email || ''}
                         >
                           {truncateText(user?.email)}
                         </div>
                         <div className="col-span-2">
                           <span
                             className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-indigo-100 to-cyan-100 text-indigo-700"
-                            title={user?.designation}
+                            title={user?.designation || ''}
                           >
                             {truncateText(user?.designation, 12)}
                           </span>
@@ -257,24 +287,24 @@ export default function UserManagementPage() {
         </div>
 
         {/* Footer Stats */}
-        {filteredUsers?.length > 0 && (
+        {safeUsers.length > 0 && (
           <div className="mt-6 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {users?.length}
+                  {safeUsers.length}
                 </div>
                 <div className="text-gray-600">Total Users</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {users?.filter((u) => u.active).length}
+                  {safeUsers.filter((u) => u?.active).length}
                 </div>
                 <div className="text-gray-600">Active Users</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
-                  {users?.filter((u) => !u.active).length}
+                  {safeUsers.filter((u) => !u?.active).length}
                 </div>
                 <div className="text-gray-600">Inactive Users</div>
               </div>

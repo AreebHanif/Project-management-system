@@ -1,9 +1,8 @@
 import Task from '../models/Task.js'
 import TaskAssignment from '../models/TaskAssignment.js'
-import Role from '../models/Role.js'
-import UserRoles from '../models/UserRoles.js'
 import TeamAssignedToModule from '../models/TeamAssignedToModule.js'
 import { taskAssigned } from '../utils/Notification.js'
+import User from '../models/User.js'
 
 const createTask = async (req, res) => {
     try {
@@ -29,11 +28,6 @@ const updateTaskById = async (req, res) => {
     try {
         const { id } = req.params
         const { name, description, priority, active, isCompleted } = req.body;
-        // if (name) await Task.findByIdAndUpdate(id, { name })
-        // if (description) await Task.findByIdAndUpdate(id, { description })
-        // if (priority) await Task.findByIdAndUpdate(id, { priority })
-        // if (priority) await Task.findByIdAndUpdate(id, { priority })
-        // if (priority) await Task.findByIdAndUpdate(id, { priority })
         await Task.findByIdAndUpdate(id, { name, description, priority, active, isCompleted })
         const updatedTask = await Task.findById(id)
         return res.status(200).json({ message: "Task updated successfully", updatedTask })
@@ -145,9 +139,9 @@ const getTaskById = async (req, res) => {
 const taskAssignedToUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { projectId, moduleId, taskId, teamId, roleName, completionDate } = req.body;
+        const { projectId, moduleId, taskId, teamId, completionDate } = req.body;
 
-        if (!id || !projectId || !moduleId || !taskId || !teamId || !roleName || !completionDate) {
+        if (!id || !projectId || !moduleId || !taskId || !teamId || !completionDate) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
@@ -177,32 +171,18 @@ const taskAssignedToUser = async (req, res) => {
             return res.status(400).json({ message: "Error assigning task" });
         }
 
-        // Check if role already exists
-        let role = await Role.findOne({ roleName });
-        if (!role) {
-            role = new Role({ roleName });
-            await role.save();
+        let userDetails = await User.findById(id).select("name email");
+        if (!userDetails) {
+            return res.status(404).json({ message: "User not found" });
         }
 
-        // Avoid duplicate user-role assignment
-        const existingUserRole = await UserRoles.findOne({ userId: id, roleId: role._id }).populate("userId", "name email");
-        if (!existingUserRole) {
-            const userRole = new UserRoles({ userId: id, roleId: role._id });
-            await userRole.save();
-
-            return res.status(201).json({
-                message: "Task and role assigned successfully",
-                taskAssignment: savedTaskAssignment,
-                userRole,
-            });
-        }
-        let values = await Task.findOne({ taskId }).populate([
+        let values = await Task.findOne({ _id: taskId }).populate([
             { path: "moduleId", select: "moduleName projectId", populate: { path: "projectId", select: "projectName" } },
         ]);
         // Email call
-        taskAssigned(existingUserRole.userId.email, existingUserRole.userId.name, values.name, values.moduleId.moduleName, values.moduleId.projectId.projectName);
+        taskAssigned(userDetails.email, userDetails.name, values.name, values.moduleId.moduleName, values.moduleId.projectId.projectName);
         return res.status(201).json({
-            message: "Task assigned successfully (role already assigned)",
+            message: "Task assigned successfully",
             taskAssignment: savedTaskAssignment,
         });
     } catch (error) {

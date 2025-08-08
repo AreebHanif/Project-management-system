@@ -25,7 +25,7 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [contactMessage, {isLoading}] = useContactMessageMutation();
+  const [contactMessage, { isLoading }] = useContactMessageMutation();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -37,11 +37,12 @@ const Contact = () => {
     e.preventDefault();
     try {
       let response = await contactMessage(formData);
-      if(response.data.message){
+      if (response?.message) {
         setIsSubmitted(true);
       }
     } catch (error) {
       console.log(error);
+      toast.error(error?.message || "Something went wrong");
     }
     setIsSubmitted(true);
     setTimeout(() => {
@@ -137,7 +138,7 @@ const Contact = () => {
                 <p className="text-lg text-slate-600">Mon - Fri: 9:00 AM - 6:00 PM</p>
                 <p className="text-slate-600">Weekend: By appointment</p>
                 <p className="text-slate-600 mt-4 max-w-2xl mx-auto">
-                  I'm a passionate developer and project manager with expertise in creating innovative solutions 
+                  I'm a passionate developer and project manager with expertise in creating innovative solutions
                   that drive business growth. Ready to transform your ideas into reality with cutting-edge technology.
                 </p>
               </div>
@@ -241,7 +242,7 @@ const Contact = () => {
                   <div className="md:col-span-2">
                     <button
                       type="submit"
-                      className="group/btn bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 text-base mx-auto block"
+                      className="group/btn bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-2xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 text-base mx-auto"
                     >
                       <Send className="w-6 h-6 group-hover/btn:translate-x-1 transition-transform" />
                       <span>Send Message</span>
@@ -262,8 +263,8 @@ const Contact = () => {
                 Let's Build Something Amazing Together
               </h3>
               <p className="text-slate-600 max-w-3xl mx-auto">
-                I'm always excited to discuss new projects and opportunities. Whether you have a specific 
-                idea in mind or need guidance on your next digital venture, I'm here to help you succeed. 
+                I'm always excited to discuss new projects and opportunities. Whether you have a specific
+                idea in mind or need guidance on your next digital venture, I'm here to help you succeed.
                 Let's turn your vision into reality with innovative solutions and exceptional results.
               </p>
             </div>

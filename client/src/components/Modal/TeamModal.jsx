@@ -40,16 +40,15 @@ const TeamModal = ({ team, setIsShowModal, isEdit, setIsEdit, refetch }) => {
     try {
       if (isEdit) {
         let res = await updateTeamById({ teamId: team._id, data });
-        console.log("res of edit", res);
-        toast.success(res?.data?.message || "Team Updated Successfully.");
+        toast.success(res?.message || "Team Updated Successfully.");
       } else {
         let res = await createTeam(formData);
-        toast.success(res?.data?.message || "Team Created Successfully.");
+        toast.success(res?.message || "Team Created Successfully.");
       }
       refetch();
     } catch (error) {
       console.log(error);
-      toast.error(error?.data?.message || "Team creation failed");
+      toast.error(error?.message || "Team creation failed");
     } finally {
       setIsSubmitting(false);
       setIsShowModal(false);
@@ -120,9 +119,8 @@ const TeamModal = ({ team, setIsShowModal, isEdit, setIsEdit, refetch }) => {
                   name="teamName"
                   value={formData.teamName}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.teamName ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.teamName ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Enter team name"
                 />
                 {errors.teamName && (
@@ -138,9 +136,8 @@ const TeamModal = ({ team, setIsShowModal, isEdit, setIsEdit, refetch }) => {
                 <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
                   <div className="flex items-center">
                     <div
-                      className={`w-3 h-3 rounded-full mr-3 ${
-                        formData.active ? "bg-green-500" : "bg-gray-400"
-                      }`}
+                      className={`w-3 h-3 rounded-full mr-3 ${formData.active ? "bg-green-500" : "bg-gray-400"
+                        }`}
                     ></div>
                     <span className="text-sm font-medium text-gray-700">
                       {formData.active ? "Active" : "Inactive"}

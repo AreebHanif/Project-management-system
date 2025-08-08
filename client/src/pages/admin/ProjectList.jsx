@@ -40,10 +40,10 @@ const ProjectListPage = () => {
     try {
       let res = await createProject(formData).unwrap();
       if (res?.error) {
-        toast.error(res?.error?.data?.message || "Failed to create project");
+        toast.error(res?.error?.message || "Failed to create project");
         return;
       } else {
-        toast.success(res?.data?.message || "Project Created Successfully");
+        toast.success(res?.message || "Project Created Successfully");
       }
       setShowCreateModal(false);
       refetch();
@@ -58,12 +58,12 @@ const ProjectListPage = () => {
     setIsSubmitting(true);
     try {
       const res = await updateProjectById({ id, formData }).unwrap();
-      toast.success(res?.data?.message || "Project updated successfully");
+      toast.success(res?.message || "Project updated successfully");
       setIsEdit(false);
       setShowCreateModal(false);
     } catch (error) {
       console.error("Failed to update project:", error);
-      toast.error(error?.data?.message || error?.message || "Update failed");
+      toast.error(error?.message || error?.message || "Update failed");
     } finally {
       setIsSubmitting(false);
       refetch();
@@ -74,12 +74,12 @@ const ProjectListPage = () => {
     try {
       let res = await deleteProjectById(id);
       toast.success(
-        res?.data?.message || res?.message || "Project deleted successfully"
+        res?.message || res?.message || "Project deleted successfully"
       );
       refetch();
     } catch (error) {
       toast.error(
-        error?.data?.message || error?.message || "Failed deletion of project"
+        error?.message || error?.message || "Failed deletion of project"
       );
     }
   };

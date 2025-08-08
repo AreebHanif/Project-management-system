@@ -88,15 +88,15 @@ export default function TaskProgressModal({
       // Simulate API call
       let res = await taskAssignUpdate({ taskId, userId, formData });
       if (res.error) {
-        toast.error(res?.data?.message || "Updation Failed");
+        toast.error(res?.message || "Updation Failed");
       } else {
-        toast.success(res?.data?.message || "Updated Successfully.");
+        toast.success(res?.message || "Updated Successfully.");
       }
       refetch();
       onClose();
     } catch (error) {
       console.error("Error updating task:", error);
-      toast.error(error?.data?.message || "Task Update Failed");
+      toast.error(error?.message || "Task Update Failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -181,9 +181,8 @@ export default function TaskProgressModal({
                   max="100"
                   value={formData.taskProgress}
                   onChange={handleProgressChange}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.progress ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.progress ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="0-100"
                 />
                 <TrendingUp className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -229,9 +228,8 @@ export default function TaskProgressModal({
                   name="status"
                   value={formData.taskStatus}
                   onChange={handleStatusChange}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${
-                    errors.taskStatus ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors appearance-none bg-white ${errors.taskStatus ? "border-red-500" : "border-gray-300"
+                    }`}
                 >
                   <option value="Pending">Pending</option>
                   <option value="InProgress">InProgress</option>

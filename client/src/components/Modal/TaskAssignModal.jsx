@@ -28,7 +28,6 @@ const TaskAssignModal = ({
     taskId,
     teamId: "",
     memberName: "",
-    roleName: "Team Member",
     completionDate: "",
   });
 
@@ -102,7 +101,6 @@ const TaskAssignModal = ({
         taskId,
         teamId: "",
         memberName: "",
-        roleName: "Team Member",
         completionDate: "",
       });
     }
@@ -118,14 +116,13 @@ const TaskAssignModal = ({
       ...prev,
       teamId,
       memberName: "",
-      roleName: "Team Member",
     }));
   };
 
   const handleMemberChange = (e) => {
     const selectedId = e.target.value;
     setSelectedMemberId(selectedId);
-    setMemberId(selectedId); // update separate memberId state
+    setMemberId(selectedId);
 
     const selectedMember = teamMembers.find(
       (member) => String(member.userId) === String(selectedId)
@@ -180,13 +177,17 @@ const TaskAssignModal = ({
 
       try {
         let res = await taskAssignedToUser({ memberId, formData }).unwrap();
-        toast.success(res?.data?.message);
+        if (res.error) {
+          toast.error(res.error);
+        } else {
+          toast.success(res?.message);
+        }
 
         refetch && refetch();
         onClose();
       } catch (error) {
         console.error(error);
-        toast.error(error?.data?.message || "Failed to assign task");
+        toast.error(error?.message || "Failed to assign task");
       }
     } else {
       toast.error("Please fill in all required fields");

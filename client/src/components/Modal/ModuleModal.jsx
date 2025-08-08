@@ -48,7 +48,6 @@ const ModuleModal = ({
       ...prev,
       active: !prev.active,
     }));
-    console.log(formData.active);
   };
 
   return (
@@ -101,9 +100,8 @@ const ModuleModal = ({
                   name="moduleName"
                   value={formData.moduleName}
                   onChange={handleUpdate}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    errors.moduleName ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${errors.moduleName ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Enter module name"
                 />
                 <Package className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
@@ -121,9 +119,8 @@ const ModuleModal = ({
               <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
                 <div className="flex items-center">
                   <div
-                    className={`w-3 h-3 rounded-full mr-3 ${
-                      formData.active ? "bg-green-500" : "bg-red-500"
-                    }`}
+                    className={`w-3 h-3 rounded-full mr-3 ${formData.active ? "bg-green-500" : "bg-red-500"
+                      }`}
                   ></div>
                   <span className="text-sm font-medium text-gray-700">
                     {formData.active ? "Active" : "Inactive"}
@@ -158,9 +155,8 @@ const ModuleModal = ({
                   value={formData.description}
                   onChange={handleUpdate}
                   rows={4}
-                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors resize-none ${
-                    errors.description ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors resize-none ${errors.description ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Enter module description"
                 />
                 <FileText className="w-4 h-4 text-gray-400 absolute left-4 top-4" />

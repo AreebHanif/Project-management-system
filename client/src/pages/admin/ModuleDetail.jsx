@@ -84,10 +84,10 @@ const ModuleDetail = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       const res = await deleteTaskById(taskId);
-      toast.success(res?.data?.message || "Task deleted successfully");
+      toast.success(res?.message || "Task deleted successfully");
       refetch();
     } catch (error) {
-      toast.error(error?.data?.message || "Error deleting task");
+      toast.error(error?.message || "Error deleting task");
     }
   };
 
@@ -126,12 +126,12 @@ const ModuleDetail = () => {
         res = await updateTaskById({ taskId: id, data: formData }).unwrap();
         setCurrentTask(null);
         toast.success(
-          res?.data?.message || res?.message || "Task updated successfully"
+          res?.message || res?.message || "Task updated successfully"
         );
       } else {
         res = await createTask(formData).unwrap();
         toast.success(
-          res?.data?.message || res?.message || "Task created successfully"
+          res?.message || res?.message || "Task created successfully"
         );
       }
       refetch();
@@ -139,7 +139,7 @@ const ModuleDetail = () => {
     } catch (error) {
       console.error(error);
       toast.error(
-        error?.data?.message || error?.message || "Error processing task"
+        error?.message || error?.message || "Error processing task"
       );
     } finally {
       setIsSubmitting(false);

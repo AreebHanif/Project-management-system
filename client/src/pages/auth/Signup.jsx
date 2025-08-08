@@ -3,8 +3,7 @@ import { Eye, EyeOff, Mail, Lock, User, Briefcase, Check } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { designations } from "../../utils/constant";
-import { useRegisterMutation } from "../../redux/Api/userApiSlice";
-import { useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../../redux/Api/userApiSlice"
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -19,7 +18,6 @@ export default function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [register] = useRegisterMutation();
-  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,13 +70,15 @@ export default function SignupPage() {
       setErrors(formErrors);
       return;
     }
-
     setIsSubmitting(true);
-
     // Simulate API call
     try {
       const res = await register(formData).unwrap();
-      toast.success(res.message);
+      if (res.error) {
+        toast.error(res.error)
+      } else {
+        toast.success(res.message);
+      }
       // Reset form
       setFormData({
         name: "",
@@ -87,7 +87,7 @@ export default function SignupPage() {
         designation: "",
       });
     } catch (error) {
-      toast.error(error?.message || error?.data?.message);
+      toast.error(error?.message || error?.message);
     } finally {
       setIsSubmitting(false);
     }

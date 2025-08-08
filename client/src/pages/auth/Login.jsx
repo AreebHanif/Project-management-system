@@ -73,9 +73,11 @@ export default function SignInPage() {
     // Simulate API callt
     try {
       const res = await login(formData).unwrap();
-
-      toast.success(res.message);
-      console.log("res", res);
+      if (res?.error) {
+        toast.error(res?.message || 'Error logging In')
+      } else {
+        toast.success(res.message);
+      }
       dispatch(setCredentials({ ...res }));
       navigate("/signup");
     } catch (error) {
